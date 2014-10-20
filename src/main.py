@@ -5,7 +5,7 @@ import sys
 from PIL import Image #@UnresolvedImport
 
 # NOTE: Some api in the chain is translating the keystrokes to this octal string
-# so instead of saying: ESCAPE = 27, we use ESCAPE = b"\033" where the b before the string converts it to bytes. 
+# so instead of saying: ESCAPE = 27, we use ESCAPE = b"\033" where the b before the string converts it to bytes.
 
 # Number of the glut window.
 window = 0
@@ -15,7 +15,7 @@ holdingLeft = False
 holdingRight = False
 sway = False
 moving = 0
-movedVertical = vertOffset = -0.6 #aligns our avatar to the proper grid. Adjust as necessary. 
+movedVertical = vertOffset = -0.6 #aligns our avatar to the proper grid. Adjust as necessary.
 movedHorizontal = 0
 mapMovedVertical = 0.0
 mapMovedHorizontal = 0.0
@@ -33,52 +33,52 @@ class Main():
         glClearColor(0.0, 0.0, 0.0, 0.0)    # This Will Clear The Background Color To Black
         glClearDepth(1.0)                    # Enables Clearing Of The Depth Buffer
         glShadeModel(GL_SMOOTH)                # Enables Smooth Color Shading
-    
+
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()                    # Reset The Projection Matrix
                                             # Calculate The Aspect Ratio Of The Window
         gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-    
+
         glMatrixMode(GL_MODELVIEW)
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)            # Set The Blending Function For Translucency
         glEnable(GL_BLEND)                          # Enable Blending
-        
+
     # The function called when our window is resized (which shouldn't happen if you enable fullscreen, below)
     def ReSizeGLScene(self, Width, Height):
         if Height == 0:                        # Prevent A Divide By Zero If The Window Is Too Small
             Height = 1
-    
+
         glViewport(0, 0, Width, Height)        # Reset The Current Viewport And Perspective Transformation
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
-        
+
         #prevent window resizing
         Width = 640
         Height = 480
         glutReshapeWindow(Width, Height)
-        
-    #This animates our on-screen player character, or avatar. 
+
+    #This animates our on-screen player character, or avatar.
     def updateAvatar(self):
         global moving, sway, facing
-        
+
         #If we've already got a movement animation, skip this function.
         if moving > 0:
             return 0
-        
-        #Switch the walking animation frames after every step. 
-        if sway and moving == 0: 
+
+        #Switch the walking animation frames after every step.
+        if sway and moving == 0:
             sway = False
         elif not sway and moving == 0:
             sway = True
-        
+
         #Get our spritesheet and determine if our character is moving. If so, crop out the right image in the spritesheet and update texture 0
-        image = Image.open("sprites/holstaurusSpriteSheet.png")  
+        image = Image.open("sprites/holstaurusSpriteSheet.png")
         if holdingUp:
             facing = "up"
             if moving == 0:
-                moving = 1000
+                moving = 500
             if sway and moving > 0:
                 box = (0, 96, 32, 128)
                 image = image.crop(box)
@@ -88,7 +88,7 @@ class Main():
         elif holdingDown:
             facing = "down"
             if moving == 0:
-                moving = 1000
+                moving = 500
             if sway and moving > 0:
                 box = (0, 0, 32, 32)
                 image = image.crop(box)
@@ -98,7 +98,7 @@ class Main():
         elif holdingLeft:
             facing = "left"
             if moving == 0:
-                moving = 1000
+                moving = 500
             if sway and moving > 0:
                 box = (0, 32, 32, 64)
                 image = image.crop(box)
@@ -108,14 +108,14 @@ class Main():
         elif holdingRight:
             facing = "right"
             if moving == 0:
-                moving = 1000
+                moving = 500
             if sway and moving > 0:
                 box = (0, 64, 32, 96)
                 image = image.crop(box)
             elif not sway and moving > 0:
                 box = (64, 64, 96, 96)
-                image = image.crop(box)    
-            
+                image = image.crop(box)
+
         ix = image.size[0]
         iy = image.size[1]
         image = image.tostring("raw", "RGBA", 0, -1)
@@ -126,10 +126,10 @@ class Main():
         glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-                
-        if moving > 0: #If the avatar is moving, we don't need to get the still image. 
+
+        if moving > 0: #If the avatar is moving, we don't need to get the still image.
             return 0;
-        
+
         #If our avatar is not moving, find the right still animation, then update texture 0
         image = Image.open("sprites/holstaurusSpriteSheet.png")
         if facing == "up" and moving == 0:
@@ -144,7 +144,7 @@ class Main():
         elif facing == "right" and moving == 0:
             box = (32, 64, 64, 96)
             image = image.crop(box)
-            
+
         ix = image.size[0]
         iy = image.size[1]
         image = image.tostring("raw", "RGBA", 0, -1)
@@ -158,23 +158,23 @@ class Main():
 
     def updateMap(self):
         global texture, sceneMap
-        if texture == sceneMap: #If our current texture matches the current sceneMap, there's no need to update it. 
+        if texture == sceneMap: #If our current texture matches the current sceneMap, there's no need to update it.
             return 0
-        
+
         image = Image.open("maps/swamp1.bmp") #Prevent program from crashing if map not found by loading a default map
-        
+
         if sceneMap == "swamp1":
-            image = Image.open("maps/swamp1.bmp")            
+            image = Image.open("maps/swamp1.bmp")
             texture = "swamp1"
-            
+
         ix = image.size[0]
         iy = image.size[1]
-        
+
         image = image.tostring("raw", "RGBX", 0, -1)
-        
+
         glGenTextures(1, 1)
         glBindTexture(GL_TEXTURE_2D, 1)
-        
+
         glPixelStorei(GL_UNPACK_ALIGNMENT,1)
         glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
@@ -184,20 +184,20 @@ class Main():
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-        
-    def update(self): 
+
+    def update(self):
         global updateTime
-        
+
         elapsedTime = glutGet(GLUT_ELAPSED_TIME)
-        if (elapsedTime - updateTime > 1000//30): #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation. 
+        if (elapsedTime - updateTime > 1000//30): #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation.
             updateTime = elapsedTime
         else:
             return 0
-        
+
         self.updateAvatar()
         self.updateMap()
-        
-    
+
+
     # The main drawing function.
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap
@@ -205,22 +205,22 @@ class Main():
         # Clear The Screen And The Depth Buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()                    # Reset The View
-        
+
         glBindTexture(GL_TEXTURE_2D, 1)
-        
-        if moving > 0: 
+
+        if moving > 0:
             if facing == "up":
-                mapMovedVertical -= 0.002
-                movedVertical -= 0.002
+                mapMovedVertical -= 0.004
+                movedVertical -= 0.004
             elif facing == "down":
-                movedVertical += 0.002
-                mapMovedVertical += 0.002
+                movedVertical += 0.004
+                mapMovedVertical += 0.004
             elif facing == "left":
-                movedHorizontal += 0.002
-                mapMovedHorizontal += 0.002
+                movedHorizontal += 0.004
+                mapMovedHorizontal += 0.004
             elif facing == "right":
-                movedHorizontal -= 0.002
-                mapMovedHorizontal -= 0.002
+                movedHorizontal -= 0.004
+                mapMovedHorizontal -= 0.004
             moving -= 1
         if movedVertical >= 15:
             mapMovedVertical = 15 - vertOffset
@@ -230,8 +230,8 @@ class Main():
             mapMovedHorizontal = 31
         if movedHorizontal <= -31:
             mapMovedHorizontal = -31
-        glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1) #We actually move the entire map. 
-        
+        glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1) #We actually move the entire map.
+
         glBegin(GL_QUADS) #Start drawing the polygon that will represent our map. In our case, one tile = 1 unit
         glTexCoord2f(0.0,1.0)
         glVertex3f(-49.0, 29.0, 0.0)
@@ -242,13 +242,13 @@ class Main():
         glTexCoord2f(0.0,0.0)
         glVertex3f(-49.0,-29.0, 0.0)
         glEnd() #Stop drawing the map
-        
+
         glBindTexture(GL_TEXTURE_2D, 0)
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glTranslatef(-movedHorizontal, -movedVertical, 0.1) #Invert our motion for the character, so if the player moves left, the map moves right and the player keeps up with the "camera"
-        
+
         doMapLogic(sceneMap, movedHorizontal, movedVertical)
-        
+
         # Draw a square (quadrilateral)
         glBegin(GL_QUADS)                   # Start drawing a 4 sided polygon
         glTexCoord2f(0.0,1.0)
@@ -260,10 +260,10 @@ class Main():
         glTexCoord2f(0.0,0.0)
         glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
         glEnd()                             # We are done with the polygon
-    
+
         #  since this is double buffered, swap the buffers to display what just got drawn.
         glutSwapBuffers()
-    
+
     # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
@@ -277,7 +277,7 @@ class Main():
             holdingDown = True
         elif args[0] == b'd':
             holdingRight = True
-            
+
     def keyReleased(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
         if args[0] == b'w':
@@ -288,54 +288,54 @@ class Main():
             holdingDown = False
         elif args[0] == b'd':
             holdingRight = False
-    
+
     def main(self):
         global window
         # For now we just pass glutInit one empty argument. I wasn't sure what should or could be passed in (tuple, list, ...)
         # Once I find out the right stuff based on reading the PyOpenGL source, I'll address this.
         glutInit(sys.argv)
-    
+
         # Select type of Display mode:
         #  Double buffer
         #  RGBA color
         # Alpha components supported
         # Depth buffer
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
-    
+
         # get a 640 x 480 window
         glutInitWindowSize(640, 480)
-    
+
         # the window starts at the upper left corner of the screen
         glutInitWindowPosition(0, 0)
-    
+
         # Okay, like the C version we retain the window id to use when closing, but for those of you new
         # to Python (like myself), remember this assignment would make the variable local and not global
         # if it weren't for the global declaration at the start of main.
         window = glutCreateWindow(b"Project Cold Iota")
-    
+
         # Register the drawing function with glut, BUT in Python land, at least using PyOpenGL, we need to
         # set the function pointer and invoke a function to actually register the callback, otherwise it
         # would be very much like the C version of the code.
         glutDisplayFunc(self.DrawGLScene)
-    
+
         # Uncomment this line to get full screen.
         #glutFullScreen()
-    
+
         # When we are doing nothing, redraw the scene.
         glutIdleFunc(self.DrawGLScene)
-    
+
         # Register the function called when our window is resized.
         glutReshapeFunc(self.ReSizeGLScene)
-    
+
         # Register the function called when the keyboard is pressed.
         glutKeyboardFunc(self.keyPressed)
         glutKeyboardUpFunc(self.keyReleased)
-    
+
         # Initialize our window.
-        self.InitGL(640, 480) 
-    
+        self.InitGL(640, 480)
+
         # Start Event Processing Engine
         glutMainLoop()
 
-#And here we go...fingers crossed. 
+#And here we go...fingers crossed.
 Main().main()
