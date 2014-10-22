@@ -15,6 +15,24 @@ PLEASE be careful and make sure to download the version your PYTHON install uses
 
 Coded for Windows x64. 
 
+
 Instructions: 
 
 run main.py
+
+
+FOR MAPPERS:
+
+The actual map images MUST be in .png format. The parallax versions MUST be in 32-bit-depth .bmp format. The collider colour is #ff00ff, or R255 G000 B255. Just overlay the included grid atop an image of the map, turn opacity down (so you can see what you're doing), fill in the squares that should be collision-detected, turn opacity back up to 100%, and export the grid as .bmp. 
+
+Maps must be exactly 1568 x 928 pixels. 
+
+
+FOR SPRITERS: 
+
+Sprites are arranged in sprite-sheets, each 96 x 128 pixels large. Each individual sprite is 32x32 pixels large. 
+
+
+FOR NPC MAKERS: 
+
+To be implemented. 

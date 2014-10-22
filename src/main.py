@@ -19,10 +19,12 @@ movedVertical = vertOffset = -0.6 #aligns our avatar to the proper grid. Adjust 
 movedHorizontal = 0
 mapMovedVertical = 0.0
 mapMovedHorizontal = 0.0
+verticalPos = 0
+horizontalPos = 0
 facing = "down"
 updateTime = 0
 texture = ""
-sceneMap = "swamp1"
+sceneMap = "town1"
 from mapLogic import *
 
 class Main():
@@ -157,20 +159,24 @@ class Main():
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
     def updateMap(self):
-        global texture, sceneMap
+        global texture, sceneMap, parallaxMap
+        
+        doMapLogic(sceneMap, horizontalPos, verticalPos) #find out if we need to change maps. 
+        
         if texture == sceneMap: #If our current texture matches the current sceneMap, there's no need to update it.
             return 0
 
-        image = Image.open("maps/swamp1.bmp") #Prevent program from crashing if map not found by loading a default map
-
-        if sceneMap == "swamp1":
-            image = Image.open("maps/swamp1.bmp")
-            texture = "swamp1"
+        if sceneMap == "town1":
+            image = Image.open("maps/town1.png")
+            parallaxMap = Image.open("maps/town1parallax.bmp")
+            
+        texture = sceneMap
 
         ix = image.size[0]
         iy = image.size[1]
 
-        image = image.tostring("raw", "RGBX", 0, -1)
+        image = image.tostring("raw", "RGBA", 0, -1)
+        parallaxMap = parallaxMap.tostring("raw", "RGBX", 0, 1)
 
         glGenTextures(1, 1)
         glBindTexture(GL_TEXTURE_2D, 1)
@@ -200,32 +206,45 @@ class Main():
 
     # The main drawing function.
     def DrawGLScene(self):
-        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap
+        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos
         self.update()
         # Clear The Screen And The Depth Buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()                    # Reset The View
 
         glBindTexture(GL_TEXTURE_2D, 1)
+        
+        colliderUp = parallaxMap[((1568*32*(verticalPos-2)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #each tile is 32x32 pixels. This returns the value of "green" colour in each pixel. 
+        colliderDown = parallaxMap[((1568*32*(verticalPos)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #When the background is white, it is 255. When it is magenta, it is 0.
+        colliderLeft = parallaxMap[((1568*32*(verticalPos-1)*4 + 1568*16*4)+(32*(horizontalPos-2) + 16)*4+1)]
+        colliderRight = parallaxMap[((1568*32*(verticalPos-1)*4 + 1568*16*4)+(32*(horizontalPos) + 16)*4+1)]
 
         if moving > 0:
             if facing == "up":
-                mapMovedVertical -= 0.004
-                movedVertical -= 0.004
+                if colliderUp != 0:
+                    mapMovedVertical -= 0.004
+                    movedVertical -= 0.004
             elif facing == "down":
-                movedVertical += 0.004
-                mapMovedVertical += 0.004
+                if colliderDown != 0:
+                    movedVertical += 0.004
+                    mapMovedVertical += 0.004
             elif facing == "left":
-                movedHorizontal += 0.004
-                mapMovedHorizontal += 0.004
+                if colliderLeft != 0:
+                    movedHorizontal += 0.004
+                    mapMovedHorizontal += 0.004
             elif facing == "right":
-                movedHorizontal -= 0.004
-                mapMovedHorizontal -= 0.004
+                if colliderRight != 0:
+                    movedHorizontal -= 0.004
+                    mapMovedHorizontal -= 0.004
             moving -= 1
+        else:
+            verticalPos = int(movedVertical/2 + 15.5) #one tile = 2 units, and we start smack-dab at 0,0, so to get the actual tile entity in a way that makes sense, compensate. 
+            horizontalPos = int(-movedHorizontal/2 + 25.5) #Now our map tiles begin at 1,1 and end at 50,30 for a total of 49x29, each tile representing 32 pixels of image. 
+            
         if movedVertical >= 15:
             mapMovedVertical = 15 - vertOffset
-        if movedVertical <= -15:
-            mapMovedVertical = -15 - vertOffset
+        if movedVertical <= -16:
+            mapMovedVertical = -16 - vertOffset
         if movedHorizontal >= 31:
             mapMovedHorizontal = 31
         if movedHorizontal <= -31:
@@ -247,7 +266,6 @@ class Main():
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glTranslatef(-movedHorizontal, -movedVertical, 0.1) #Invert our motion for the character, so if the player moves left, the map moves right and the player keeps up with the "camera"
 
-        doMapLogic(sceneMap, movedHorizontal, movedVertical)
 
         # Draw a square (quadrilateral)
         glBegin(GL_QUADS)                   # Start drawing a 4 sided polygon
