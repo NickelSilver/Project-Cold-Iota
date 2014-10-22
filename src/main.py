@@ -34,6 +34,7 @@ texture = ""
 sceneMap = "town1"
 npcList = ""
 npcs = []
+firstRun = True #For the first cycle, make sure everything updates properly. 
 
 class Main():
 
@@ -210,13 +211,15 @@ class Main():
         
 
     def update(self):
-        global updateTime
+        global updateTime, firstRun
 
         elapsedTime = glutGet(GLUT_ELAPSED_TIME)
-        if (elapsedTime - updateTime > 1000//30): #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation.
+        if (elapsedTime - updateTime > 1000//30) or firstRun: #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation.
             updateTime = elapsedTime
         else:
             return 0
+        
+        firstRun = False
 
         self.updateAvatar()
         self.updateMap()
@@ -368,16 +371,6 @@ class Main():
             glTranslatef(transmatrixX[x], transmatrixY[x], -32)
             
             glBindTexture(GL_TEXTURE_2D, x+2)
-            
-            glEnableClientState(GL_VERTEX_ARRAY)
-            
-            self.m_nVBOVertices = glGenBuffersARB( 1)
-            glBindBufferARB( GL_ARRAY_BUFFER_ARB, self.m_nVBOVertices )
-            glBufferDataARB( GL_ARRAY_BUFFER_ARB, vertex, GL_STATIC_DRAW_ARB )
-            # // Generate And Bind The Texture Coordinate Buffer
-            self.m_nVBOTexCoords = glGenBuffersARB( 1);                        # // Get A Valid Name
-            glBindBufferARB( GL_ARRAY_BUFFER_ARB, self.m_nVBOTexCoords );        # // Bind The Buffer
-            # // Load The Data
             
             glBegin(GL_QUADS)
             glTexCoord2f(0.0,1.0)
