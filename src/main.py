@@ -1,8 +1,15 @@
 from OpenGL.GL import *
+OpenGL.ERROR_CHECKING = False
+OpenGL.ERROR_LOGGING = False
+from OpenGL.GL.ARB.vertex_buffer_object import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 from PIL import Image #@UnresolvedImport
+
+
+from mapLogic import *
+from npcManager import *
 
 # NOTE: Some api in the chain is translating the keystrokes to this octal string
 # so instead of saying: ESCAPE = 27, we use ESCAPE = b"\033" where the b before the string converts it to bytes.
@@ -25,7 +32,8 @@ facing = "down"
 updateTime = 0
 texture = ""
 sceneMap = "town1"
-from mapLogic import *
+npcList = ""
+npcs = []
 
 class Main():
 
@@ -161,7 +169,7 @@ class Main():
     def updateMap(self):
         global texture, sceneMap, parallaxMap
         
-        doMapLogic(sceneMap, horizontalPos, verticalPos) #find out if we need to change maps. 
+        doMapLogic(sceneMap, horizontalPos, verticalPos, facing) #find out if we need to change maps. 
         
         if texture == sceneMap: #If our current texture matches the current sceneMap, there's no need to update it.
             return 0
@@ -190,6 +198,16 @@ class Main():
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+        
+    def updateNPCs(self):
+        global npcList, sceneMap, npcs
+        if npcList == sceneMap: #If our NPC's are already populating our map, we don't need to update them. 
+            return 0
+        
+        npcList = sceneMap
+        createNPCList(sceneMap) #from npcManager class
+        npcs = getNPCList()
+        
 
     def update(self):
         global updateTime
@@ -206,7 +224,7 @@ class Main():
 
     # The main drawing function.
     def DrawGLScene(self):
-        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos
+        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs
         self.update()
         # Clear The Screen And The Depth Buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -215,25 +233,43 @@ class Main():
         glBindTexture(GL_TEXTURE_2D, 1)
         
         colliderUp = parallaxMap[((1568*32*(verticalPos-2)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #each tile is 32x32 pixels. This returns the value of "green" colour in each pixel. 
-        colliderDown = parallaxMap[((1568*32*(verticalPos)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #When the background is white, it is 255. When it is magenta, it is 0.
+        try: #This can throw an index out of bounds exception. Catch it and set the collider appropriately. 
+            colliderDown = parallaxMap[((1568*32*(verticalPos)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #When the background is white, it is 255. When it is magenta, it is 0.
+        except:
+            colliderDown = 0
         colliderLeft = parallaxMap[((1568*32*(verticalPos-1)*4 + 1568*16*4)+(32*(horizontalPos-2) + 16)*4+1)]
         colliderRight = parallaxMap[((1568*32*(verticalPos-1)*4 + 1568*16*4)+(32*(horizontalPos) + 16)*4+1)]
+        
+        npcColliders = False
+        for x in range(len(npcs)):
+            if facing == "up":
+                if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
+                    npcColliders = True
+            elif facing == "down":
+                if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
+                    npcColliders = True
+            elif facing == "left":
+                if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
+                    npcColliders = True
+            elif facing == "right":
+                if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
+                    npcColliders = True
 
         if moving > 0:
             if facing == "up":
-                if colliderUp != 0:
+                if colliderUp != 0 and verticalPos > 2 and not npcColliders:
                     mapMovedVertical -= 0.004
                     movedVertical -= 0.004
             elif facing == "down":
-                if colliderDown != 0:
+                if colliderDown != 0 and verticalPos < 29 and not npcColliders:
                     movedVertical += 0.004
                     mapMovedVertical += 0.004
             elif facing == "left":
-                if colliderLeft != 0:
+                if colliderLeft != 0 and horizontalPos > 1 and not npcColliders:
                     movedHorizontal += 0.004
                     mapMovedHorizontal += 0.004
             elif facing == "right":
-                if colliderRight != 0:
+                if colliderRight != 0 and horizontalPos < 49 and not npcColliders:
                     movedHorizontal -= 0.004
                     mapMovedHorizontal -= 0.004
             moving -= 1
@@ -251,7 +287,7 @@ class Main():
             mapMovedHorizontal = -31
         glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1) #We actually move the entire map.
 
-        glBegin(GL_QUADS) #Start drawing the polygon that will represent our map. In our case, one tile = 1 unit
+        glBegin(GL_QUADS) #Start drawing the polygon that will represent our map. In our case, one tile = 2 units. Oops. Derp. Well, too late to change it now. Strike the Earth!
         glTexCoord2f(0.0,1.0)
         glVertex3f(-49.0, 29.0, 0.0)
         glTexCoord2f(1.0,1.0)
@@ -278,6 +314,81 @@ class Main():
         glTexCoord2f(0.0,0.0)
         glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
         glEnd()                             # We are done with the polygon
+        
+        self.updateNPCs() #Now the real fun begins. For each and every NPC, draw a new quad and update the texture appropriately. 
+        
+        transmatrixX = []
+        transmatrixY=[]
+        
+        for x in range(len(npcs)):
+            #for ease of use, NPC coords are given using practical coords. Convert them to the OpenGL coords of our scene. 
+            transmatrixX.append((npcs[x].getHorizontal()-25)*2 + mapMovedHorizontal)
+            transmatrixY.append((-npcs[x].getVertical()+15)*2 - vertOffset + mapMovedVertical)
+            
+            if npcs[x].getFlagForUpdate():
+                print(x)
+                image = Image.open(npcs[x].getSprite())
+                box = npcs[x].updateSprite()
+                image = image.crop(box)
+                ix = image.size[0]
+                iy = image.size[1]
+                image = image.tostring("raw", "RGBA", 0, -1)
+                glGenTextures(1, 0)
+                glBindTexture(GL_TEXTURE_2D, x+2)
+                glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+                glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                npcs[x].flagForUpdate(False)
+                
+        vertex = []
+        vertices = []
+        vertex.append(1.0)
+        vertex.append(1.0)
+        vertex.append(0.0)
+        vertices.append(vertex)
+        vertex = []      
+        vertex.append(-1.0)
+        vertex.append(1.0)
+        vertex.append(0.0)
+        vertices.append(vertex)
+        vertex = []   
+        vertex.append(-1.0)
+        vertex.append(-1.0)
+        vertex.append(0.0)
+        vertices.append(vertex)
+        vertex = []   
+        vertex.append(1.0)
+        vertex.append(-1.0)
+        vertex.append(0.0)
+        vertices.append(vertex)
+        
+        for x in range(len(transmatrixX)):
+            glLoadIdentity()
+            glTranslatef(transmatrixX[x], transmatrixY[x], -32)
+            
+            glBindTexture(GL_TEXTURE_2D, x+2)
+            
+            glEnableClientState(GL_VERTEX_ARRAY)
+            
+            self.m_nVBOVertices = glGenBuffersARB( 1)
+            glBindBufferARB( GL_ARRAY_BUFFER_ARB, self.m_nVBOVertices )
+            glBufferDataARB( GL_ARRAY_BUFFER_ARB, vertex, GL_STATIC_DRAW_ARB )
+            # // Generate And Bind The Texture Coordinate Buffer
+            self.m_nVBOTexCoords = glGenBuffersARB( 1);                        # // Get A Valid Name
+            glBindBufferARB( GL_ARRAY_BUFFER_ARB, self.m_nVBOTexCoords );        # // Bind The Buffer
+            # // Load The Data
+            
+            glBegin(GL_QUADS)
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-1.0, 1.0, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(1.0, 1.0, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(1.0, -1.0, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
+            glEnd()    
 
         #  since this is double buffered, swap the buffers to display what just got drawn.
         glutSwapBuffers()
@@ -287,24 +398,24 @@ class Main():
         global holdingLeft, holdingRight, holdingUp, holdingDown
         if args[0] == b"\033": # If escape is pressed, kill everything.
             sys.exit()
-        elif args[0] == b'w':
+        elif args[0] == b'w' or args[0] == b'W':
             holdingUp = True
-        elif args[0] == b'a':
+        elif args[0] == b'a' or args[0] == b'A':
             holdingLeft = True
-        elif args[0] == b's':
+        elif args[0] == b's' or args[0] == b'S':
             holdingDown = True
-        elif args[0] == b'd':
+        elif args[0] == b'd' or args[0] == b'D':
             holdingRight = True
 
     def keyReleased(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
-        if args[0] == b'w':
+        if args[0] == b'w' or args[0] == b'W':
             holdingUp = False
-        elif args[0] == b'a':
+        elif args[0] == b'a' or args[0] == b'A':
             holdingLeft = False
-        elif args[0] == b's':
+        elif args[0] == b's' or args[0] == b'S':
             holdingDown = False
-        elif args[0] == b'd':
+        elif args[0] == b'd' or args[0] == b'D':
             holdingRight = False
 
     def main(self):
@@ -312,6 +423,7 @@ class Main():
         # For now we just pass glutInit one empty argument. I wasn't sure what should or could be passed in (tuple, list, ...)
         # Once I find out the right stuff based on reading the PyOpenGL source, I'll address this.
         glutInit(sys.argv)
+        glutInitContextVersion( 2, 1 )
 
         # Select type of Display mode:
         #  Double buffer
