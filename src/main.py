@@ -72,7 +72,7 @@ class Main():
 
     #This animates our on-screen player character, or avatar.
     def updateAvatar(self):
-        global moving, sway, facing
+        global moving, sway, facing, npcList
 
         #If we've already got a movement animation, skip this function.
         if moving > 0:
@@ -85,11 +85,12 @@ class Main():
             sway = True
 
         #Get our spritesheet and determine if our character is moving. If so, crop out the right image in the spritesheet and update texture 0
+        duration = int(500 - 25 * len(npcs) * 0.9)
         image = Image.open("sprites/protagSpriteSheet1.png")
         if holdingUp:
             facing = "up"
             if moving == 0:
-                moving = 500
+                moving = duration
             if sway and moving > 0:
                 box = (0, 96, 32, 128)
                 image = image.crop(box)
@@ -99,7 +100,7 @@ class Main():
         elif holdingDown:
             facing = "down"
             if moving == 0:
-                moving = 500
+                moving = duration
             if sway and moving > 0:
                 box = (0, 0, 32, 32)
                 image = image.crop(box)
@@ -109,7 +110,7 @@ class Main():
         elif holdingLeft:
             facing = "left"
             if moving == 0:
-                moving = 500
+                moving = duration
             if sway and moving > 0:
                 box = (0, 32, 32, 64)
                 image = image.crop(box)
@@ -119,7 +120,7 @@ class Main():
         elif holdingRight:
             facing = "right"
             if moving == 0:
-                moving = 500
+                moving = duration
             if sway and moving > 0:
                 box = (0, 64, 32, 96)
                 image = image.crop(box)
@@ -227,7 +228,7 @@ class Main():
 
     # The main drawing function.
     def DrawGLScene(self):
-        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs
+        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs, npcList
         self.update()
         # Clear The Screen And The Depth Buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -259,22 +260,23 @@ class Main():
                     npcColliders = True
 
         if moving > 0:
+            offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
             if facing == "up":
                 if colliderUp != 0 and verticalPos > 2 and not npcColliders:
-                    mapMovedVertical -= 0.004
-                    movedVertical -= 0.004
+                    mapMovedVertical -= offset
+                    movedVertical -= offset
             elif facing == "down":
                 if colliderDown != 0 and verticalPos < 29 and not npcColliders:
-                    movedVertical += 0.004
-                    mapMovedVertical += 0.004
+                    movedVertical += offset
+                    mapMovedVertical += offset
             elif facing == "left":
                 if colliderLeft != 0 and horizontalPos > 1 and not npcColliders:
-                    movedHorizontal += 0.004
-                    mapMovedHorizontal += 0.004
+                    movedHorizontal += offset
+                    mapMovedHorizontal += offset
             elif facing == "right":
                 if colliderRight != 0 and horizontalPos < 49 and not npcColliders:
-                    movedHorizontal -= 0.004
-                    mapMovedHorizontal -= 0.004
+                    movedHorizontal -= offset
+                    mapMovedHorizontal -= offset
             moving -= 1
         else:
             verticalPos = int(movedVertical/2 + 15.5) #one tile = 2 units, and we start smack-dab at 0,0, so to get the actual tile entity in a way that makes sense, compensate. 
@@ -329,7 +331,6 @@ class Main():
             transmatrixY.append((-npcs[x].getVertical()+15)*2 - vertOffset + mapMovedVertical)
             
             if npcs[x].getFlagForUpdate():
-                print(x)
                 image = Image.open(npcs[x].getSprite())
                 box = npcs[x].updateSprite()
                 image = image.crop(box)
@@ -343,28 +344,24 @@ class Main():
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
                 npcs[x].flagForUpdate(False)
-                
+        
+        #Right, this mess creates a new list of vertices for us so we can render a VBO (or many, as the case may be)
         vertex = []
-        vertices = []
         vertex.append(1.0)
         vertex.append(1.0)
         vertex.append(0.0)
-        vertices.append(vertex)
-        vertex = []      
+
         vertex.append(-1.0)
         vertex.append(1.0)
         vertex.append(0.0)
-        vertices.append(vertex)
-        vertex = []   
+        
         vertex.append(-1.0)
         vertex.append(-1.0)
         vertex.append(0.0)
-        vertices.append(vertex)
-        vertex = []   
+
         vertex.append(1.0)
         vertex.append(-1.0)
         vertex.append(0.0)
-        vertices.append(vertex)
         
         for x in range(len(transmatrixX)):
             glLoadIdentity()
