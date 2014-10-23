@@ -85,7 +85,7 @@ class Main():
             sway = True
 
         #Get our spritesheet and determine if our character is moving. If so, crop out the right image in the spritesheet and update texture 0
-        image = Image.open("sprites/holstaurusSpriteSheet.png")
+        image = Image.open("sprites/protagSpriteSheet1.png")
         if holdingUp:
             facing = "up"
             if moving == 0:
@@ -142,7 +142,7 @@ class Main():
             return 0;
 
         #If our avatar is not moving, find the right still animation, then update texture 0
-        image = Image.open("sprites/holstaurusSpriteSheet.png")
+        image = Image.open("sprites/protagSpriteSheet1.png")
         if facing == "up" and moving == 0:
             box = (32, 96, 64, 128)
             image = image.crop(box)
