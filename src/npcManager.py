@@ -9,12 +9,12 @@ from npc import *
 npcList = []
 
 #Note: drawing quads seems to be incredibly slow. Recommend not using more than 5 NPC's per map until fixed
-def createNPCList(scene): #add NPC's here. Additional features will be added later. 
+def createNPCList(scene): #add NPC's here. Additional features will be added later.
     global npcList
     if scene == "town1":
         npc1 = npc("town1", 7, 7, "down", "sprites/npc1SpriteSheet1.png")
-        npc1.setText("Geez, like, get out of my way!")
-        npc1.setText("Can't you see I'm brooding over here?")
+        npc1.setText(b"Geez, like, get out of my way!")
+        npc1.setText(b"Can't you see I'm brooding over here?")
         npcList.append(npc1)
         npc1 = npc("town1", 9, 9, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
@@ -44,7 +44,7 @@ def createNPCList(scene): #add NPC's here. Additional features will be added lat
         npcList.append(npc1)
         npc1 = npc("town1", 20, 9, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        
+
 def getNPCList():
     global npcList
     return npcList
