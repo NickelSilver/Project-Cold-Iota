@@ -4,7 +4,7 @@ Created on 21 Oct 2014
 @author: Nickel
 '''
 
-from npc import *
+from npcs.npc import *
 
 npcList = []
 

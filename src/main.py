@@ -7,7 +7,7 @@ from PIL import Image #@UnresolvedImport
 
 
 from mapLogic import *
-from npcManager import *
+from npcs.npcManager import *
 
 # NOTE: Some api in the chain is translating the keystrokes to this octal string
 # so instead of saying: ESCAPE = 27, we use ESCAPE = b"\033" where the b before the string converts it to bytes.
