@@ -6,7 +6,7 @@ Created on Oct 25, 2014
 
 
 '''
-from npc import npc
+from npcs import npc
 
 
 class character():

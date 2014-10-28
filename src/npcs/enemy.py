@@ -9,7 +9,7 @@ attributes:  Name, health, alive, mood
 
 Methods:  Speak, move, attack
 '''
-from npc import npc
+from npcs import npc
 
 class enemy(npc):
     
