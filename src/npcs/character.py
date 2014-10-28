@@ -24,7 +24,7 @@ class abilities:
         self.damage
         
         #ability cost
-        
+    
         
         
         

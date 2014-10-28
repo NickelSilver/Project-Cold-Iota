@@ -25,7 +25,10 @@ class npc:
         self.holdingLeft = False
         self.holdingRight = False
         self.sway = False
-    
+        self.responses = [2]
+        
+        initResponse() #method to store responses.
+        
     def setText(self, line):
         self.text.append(line)
     
@@ -143,6 +146,39 @@ class npc:
         
         return self.box
         
+    def initResponse(self):
+        if self.sprite == "goatBoySpriteSheet1.png":
+            self.responses[0] = "Here we goat again..."
+            self.responses[1] = ("Hey, goat any grass?")
+            self.responses[2] = ("Whatever goats your boat.")
+        elif self.sprite == "emoSpriteSheet.png":
+            self.responses[0] = ("meh...")
+            self.responses[1] = ("I wish I was a flower.")
+            self.responses[2] = ("Good day.")
+        elif self.sprite == "holstaurusSpriteSheet.png":
+            self.responses[0] = ("")
+            self.responses[1]("")
+            self.responses[2]("")
+        elif self.sprite == "horsinAroundSpriteSheet1.png":
+            self.responses[0] = ("I'm horsin' around.")
+            self.responses[1] = ("Neigh-sayers all around.")
+            self.responses[2] = ("Don't bale on me!")
+        elif self.sprite == "monkeyBusinessSpriteSheet1.png":
+            self.responses[0] = ("Selling bananas is harder than it looks.")
+            self.responses[1] = ("It's hard to keep a good suite clean.")
+            self.responses[2] = ("I used to be a banker but I lost interest.")
+        elif self.sprite == " mrPiddlesSpriteSheet1.png":
+            self.responses[0] = ("Mr piddles requests your assistance.")
+            self.responses[1] = ("You've got to be kitten me.")
+            self.responses[2] = ("Looking forward to Caturday.")
+        elif self.sprite == "profChowdaSpriteSheet1.png":
+            self.responses[0] = ("")
+            self.responses[1] = ("")
+            self.responses[2] = ("")
+        elif self.sprite == "npc1SpriteSheet1.png":
+            self.responses[0] = ("")
+            self.responses[1] = ("")
+            self.responses[2] = ("")  
         
         
         
