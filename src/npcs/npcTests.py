@@ -4,7 +4,7 @@ Created on Oct 25, 2014
 @author: Matt
 '''
 import unittest
-from npc import npc
+from npcs import npc
 
 class Test(unittest.TestCase):
     
