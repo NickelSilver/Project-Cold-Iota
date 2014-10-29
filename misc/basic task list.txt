@@ -1,0 +1,22 @@
+Need not necessarily in order:
+
+more maps(transition ability)
+monsters (enemies)
+combat
+fleshed out text
+Menus
+Leveling up
+Items (special, mundane,equipment)
+Balance testing
+Main dungeons (puzzle elements?)
+object interaction
+restrict sequence breaking
+Ability to save
+refactoring
+Bugs testing
+Testing (unit, integration, etc.)
+Optional:
+cutscenes
+skills/perks
+music/soundeffects
+multi character vs multi monster
