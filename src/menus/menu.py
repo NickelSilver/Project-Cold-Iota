@@ -1,6 +1,6 @@
 __author__ = 'Andrea'
 
-from option import Option
+from menus.option import *
 class Menu:
 
     #menus should have a list of options (tabs) for the user to select from
@@ -8,12 +8,19 @@ class Menu:
         self.options = optionList
         self.name = name
 
+    def setName(self, name):
+        self.name = name
+
+    def getName(self):
+        return self.name
+
 
     def getAllOptions(self):
         optionList = ''
         if len(self.options)!=0:
             for option in self.options:
-                optionList+=option+'\n'
+                optionList+=option.getName()+'\n'
+
         return optionList
 
     def getSelectedOption(self, optionName):
