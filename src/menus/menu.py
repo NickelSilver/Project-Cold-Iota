@@ -5,12 +5,15 @@ from menus.cursor import *
 class Menu:
 
     #menus should have a list of options (tabs) for the user to select from
-    #menus need to get and set position and size
     #also make menu manager class
-    def __init__(self, optionList = [], name = ''):
+    def __init__(self, optionList = [], name = '', xpos = 0, ypos = 0, width = 640, height = 480):
         self.options = optionList
         self.name = name
         self.cursor = Cursor()
+        self. x = xpos
+        self.y = ypos
+        self.width = width
+        self.height = height
 
     def setName(self, name):
         self.name = name

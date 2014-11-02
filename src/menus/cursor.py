@@ -1,10 +1,11 @@
 __author__ = 'Andrea'
 
 class Cursor:
-    def __init__(self, xpos=0, ypos=0, size=10, jump=5, image = None):
+    def __init__(self, xpos=0, ypos=0, width = 5,height  = 10, jump=5, image = None):
         self.x = xpos
         self.y = ypos
-        self.size = size
+        self.width = width
+        self.height = height
         self.jump = jump
         self.count = 0
         self.image = image
