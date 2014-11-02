@@ -1,18 +1,32 @@
 __author__ = 'Andrea'
 
 from menus.option import *
+from menus.cursor import *
 class Menu:
 
     #menus should have a list of options (tabs) for the user to select from
+    #menus need to get and set position and size
+    #also make menu manager class
     def __init__(self, optionList = [], name = ''):
         self.options = optionList
         self.name = name
+        self.cursor = Cursor()
 
     def setName(self, name):
         self.name = name
 
     def getName(self):
         return self.name
+
+    def moveCursorUp(self):
+        self.cursor.moveUp()
+        return self.cursor.getPos()
+
+    def moveCursorDown(self):
+        count =self.cursor.getCount() +1
+        if not count>=len(self.options):
+            self.cursor.moveDown()
+        return self.cursor.getPos()
 
 
     def getAllOptions(self):
@@ -23,17 +37,11 @@ class Menu:
 
         return optionList
 
-    def getSelectedOption(self, optionName):
-        x = 0
-        found = False
-        while not found and x<len(self.options):
-            possible = self.options[x]
-            if optionName!=possible.getName:
-                x+=1
-            else:
-                found = True
-        if found:
-            return possible
+    def getSelectedOption(self, count):
+        if not count>=len(self.options):
+            option = self.options[count]
+        return option
+
 
 
     def addOption(self, option):
@@ -42,3 +50,9 @@ class Menu:
 
     def getLinkedMenu(self, option):
         return option.getLink()
+
+    def setImage(self, image):
+        self.image = image
+
+    def getImgae(self):
+        return self.image

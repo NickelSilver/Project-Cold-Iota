@@ -11,7 +11,7 @@ class Cursor:
 
     def moveUp(self):
         self.count-=1
-        if self.count>=0:
+        if self.count>0:
             self.y +=self.jump
 
     def moveDown(self):
@@ -36,3 +36,9 @@ class Cursor:
 
     def getImgae(self):
         return self.image
+
+    def getCount(self):
+        return self.count
+
+    def setCount(self, num):
+        self.count = num
