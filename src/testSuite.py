@@ -2,6 +2,9 @@ __author__ = 'Andrea'
 import unittest
 from npcs.npc import *
 from mapLogic import *
+from menus.menu import *
+from menus.cursor import *
+from menus.option import *
 
 
 class tests(unittest.TestCase):
@@ -30,6 +33,64 @@ class tests(unittest.TestCase):
 
         pass
 
+    #----------------------Menu tests----------------------------
+    def testGetAllOptions(self):
+        options = []
+        option1 = Option('option1')
+        option2 = Option('option2')
+        option3 = Option('option3')
+        options.append(option1)
+        options.append(option2)
+        options.append(option3)
+        optionString = option1.getName()+'\n'+option2.getName()+'\n'+option3.getName()+'\n'
+        menu1 = Menu(options,'menu 1')
+        self.assertEqual(optionString, menu1.getAllOptions())
+
+    def testGetSelectedOption(self):
+        options = []
+        option1 = Option('option1')
+        option2 = Option('option2')
+        option3 = Option('option3')
+        options.append(option1)
+        options.append(option2)
+        options.append(option3)
+        menu1 = Menu(options,'menu 1')
+        self.assertEqual(option1.getName(),menu1.getSelectedOption().getName())
+
+    #-------------------option/menu tests---------------------------------
+    def testGetLink(self):
+        options = []
+        option1 = Option('option1')
+        option2 = Option('option2')
+        option3 = Option('option3')
+        options.append(option1)
+        options.append(option2)
+        options.append(option3)
+        menu1 = Menu(options,'menu 1')
+        menu2 = Menu(['yes','no'],'menu2')
+        option1.setLink(menu2)
+        selected = menu1.getSelectedOption()
+        self.assertEqual(menu2.getName(),menu1.getLinkedMenu(selected).getName())
+
+    #------------------cursor/menu tests-------------------------------
+    def testMoveCursor(self):
+        options = []
+        option1 = Option('option1')
+        option2 = Option('option2')
+        option3 = Option('option3')
+        options.append(option1)
+        options.append(option2)
+        options.append(option3)
+        menu1 = Menu(options,'menu 1')
+        menu1.cursor.setCount(1)
+        pos = menu1.moveCursorUp()
+        pos = menu1.moveCursorUp() #this line has no effect because there is handling in the cursor class
+        self.assertEqual((0,5),pos)
+        pos = menu1.moveCursorDown()
+        pos = menu1.moveCursorDown()
+        pos = menu1.moveCursorDown()#this line has no effect because there is handling in the menu class for when someone
+        #tries to go beyond the bottom of the menu
+        self.assertEqual((0,-5),pos)
 
 
 if __name__ == '__main__':
