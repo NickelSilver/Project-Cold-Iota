@@ -35,7 +35,7 @@ class PauseMenu(Menu):
         #define settings here
         pass
 
-    def quit(self):
+    def quitGame(self):
         #allow user to quit game
         pass
 
