@@ -44,7 +44,7 @@ class Menu:
         count = self.cursor.count
         if not count >=len(self.options):
             option = self.options[count]
-        return option.getName()
+        return option
 
 
 

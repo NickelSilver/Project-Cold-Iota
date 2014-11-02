@@ -1,6 +1,6 @@
 __author__ = 'Andrea'
 
-#from menus.menu import Menu
+
 
 class Option:
     #each option in a menu should only be linked to one other menu, however options in that menu may each be linked to one more
@@ -9,7 +9,7 @@ class Option:
     def __init__(self, name = ''):
         self.name = name
         self.linked = False
-        self.link = []
+        self.link = ''
 
     def getLink(self):
         if self.linked:
@@ -19,7 +19,7 @@ class Option:
 
     def setLink(self, menu):
         self.linked = True
-        self.link.append(menu)
+        self.link = menu
 
     def getName(self):
         return self.name
