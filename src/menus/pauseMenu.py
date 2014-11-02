@@ -11,6 +11,10 @@ class PauseMenu(Menu):
         #stop all movement in game, stop clocks, stop everything
         pass
 
+    def unpauseGame(self):
+        #restart all mov't, and clocks, everything
+        pass
+
     def saveGame(self):
         #implement save function here, note we are only going to alllow user's one save file for the time being
         pass
