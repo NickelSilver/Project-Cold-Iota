@@ -40,10 +40,11 @@ class Menu:
 
         return optionList
 
-    def getSelectedOption(self, count):
-        if not count>=len(self.options):
+    def getSelectedOption(self):
+        count = self.cursor.count
+        if not count >=len(self.options):
             option = self.options[count]
-        return option
+        return option.getName()
 
 
 
