@@ -11,8 +11,8 @@ class Cursor:
         self.image = image
 
     def moveUp(self):
-        self.count-=1
         if self.count>0:
+            self.count-=1
             self.y +=self.jump
 
     def moveDown(self):
