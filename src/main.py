@@ -3,6 +3,7 @@ from OpenGL.GL.ARB.vertex_buffer_object import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
+import time
 from PIL import Image #@UnresolvedImport
 
 
@@ -85,7 +86,8 @@ class Main():
             sway = True
 
         #Get our spritesheet and determine if our character is moving. If so, crop out the right image in the spritesheet and update texture 0
-        duration = int(500 - 25 * len(npcs) * 0.9)
+        #duration = int(500 - 25 * len(npcs) * 0.9)
+        duration = int(200)
         image = Image.open("sprites/protagSpriteSheet1.png")
         if holdingUp:
             facing = "up"
@@ -213,7 +215,7 @@ class Main():
 
     def update(self):
         global updateTime, firstRun
-
+        """
         elapsedTime = glutGet(GLUT_ELAPSED_TIME)
         if (elapsedTime - updateTime > 1000//30) or firstRun: #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation.
             updateTime = elapsedTime
@@ -221,15 +223,17 @@ class Main():
             return 0
 
         firstRun = False
-
+        """
         self.updateAvatar()
         self.updateMap()
 
 
     # The main drawing function.
     def DrawGLScene(self):
-        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs, npcList, npcCollider, showText
-        self.update()
+        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs, npcList, npcCollider, showText, firstRun
+        if firstRun:
+            self.update()
+            firstRun = False
         # Clear The Screen And The Depth Buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()                    # Reset The View
@@ -265,7 +269,8 @@ class Main():
                     facingNPC = npcs[x]
 
         if moving > 0:
-            offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
+            #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
+            offset = 2.0/(200)
             if facing == "up":
                 if colliderUp != 0 and verticalPos > 2 and not npcCollider:
                     mapMovedVertical -= offset
@@ -459,7 +464,6 @@ class Main():
         #glutFullScreen()
 
         # When we are doing nothing, redraw the scene.
-        glutIdleFunc(self.DrawGLScene)
 
         # Register the function called when our window is resized.
         glutReshapeFunc(self.ReSizeGLScene)
@@ -471,8 +475,15 @@ class Main():
         # Initialize our window.
         self.InitGL(640, 480)
 
+        glutTimerFunc(int(1000.0 / 60.0), self.mainLoop, 0)
+
         # Start Event Processing Engine
         glutMainLoop()
+
+    def mainLoop(self, val):
+        self.update()
+        self.DrawGLScene()
+        glutTimerFunc(int(1000.0 / 60.0), self.mainLoop, val)
 
 #And here we go...fingers crossed.
 Main().main()
