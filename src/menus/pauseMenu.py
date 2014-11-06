@@ -17,7 +17,7 @@ class PauseMenu(Menu):
 
     def saveGame(self):
         #implement save function here, note we are only going to alllow user's one save file for the time being
-        pass
+        print("game has been saved")
 
     def loadGame(self):
         #implement load function here
