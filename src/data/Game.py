@@ -1,27 +1,50 @@
 __author__ = 'Matt'
 import pickle
+import os
 
-class Game:
+class Game():
     def __init__(self):
         #manages game state
-        self.GameFile
-        self.StartMap
-        self.PlayerProgress
+        self.gamefile = ""
+        self.currentmap = ""
+        self.playerprogress = ""
 
 
     def loadGame(self):
 
-        gamefile = open(r'filelocation','w')
-        gamedata = pickle.Unpickler(gamefile).load()
+        file = open("GameFiles.txt","rb")
+
+        gamedata = pickle.Unpickler(file).load()
         return gamedata
 
-    def saveGame(self, gamedata):
+    def saveGame(self):
+        filename = open(b'GameFiles.txt','wb')
+        gamedata = []
+        gamedata.append(self.gamefile)
+        gamedata.append(self.currentmap)
+        gamedata.append(self.playerprogress)
         #if new game, create a save file
-        pickle.Pickler(gamedata)
-
+        pickle.Pickler(filename)
+        pickle.dump(gamedata, filename)
         #if old game, overwrite save file or create a new timestamp
 
+    def setGameFile(self, gfile):
+        self.gamefile = gfile
+
+    def getGameFile(self):
+        return self.gamefile
+
     def getMap(self):
-        #
+        return self.currentmap
+
+    def setMap(self, map):
+        # for saving
+        self.currentmap = map
+
+    def getProgress(self):
+        return self.playerprogress
+
+    def setProgress(self, progress):
+        self.playerprogress = progress
 
 

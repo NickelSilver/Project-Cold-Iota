@@ -5,7 +5,7 @@ from mapLogic import *
 from menus.menu import *
 from menus.cursor import *
 from menus.option import *
-
+from data.Game import *
 
 class tests(unittest.TestCase):
 
@@ -92,6 +92,22 @@ class tests(unittest.TestCase):
         #tries to go beyond the bottom of the menu
         self.assertEqual((0,-5),pos)
 
+    #------------------Game state-------------------------------
+    def testGameSave(self):
+        Game1 = Game()
+
+        #write generic tests to file.
+        Game1.setGameFile("Test.txt")
+        Game1.setMap("map1")
+        Game1.setProgress("Progress1")
+
+        Game1.saveGame()
+
+        #load back game
+        gamedata = Game1.loadGame()
+
+        print(gamedata)
+        pass
 
 if __name__ == '__main__':
     unittest.main()
