@@ -29,13 +29,15 @@ def createMenus():
     exitOut.setLink(confirmationMenu)
     pauseOptions = [save,load,inventory,equipment,map,settings,exitOut]
 
-    pauseM = PauseMenu(pauseOptions,'Paused')
+    pauseM = PauseMenu(pauseOptions,'Paused',xpos=0,ypos=480)
+    pauseM.setImage('menus/Pause.png')
 
     #-----------------------start screen menu--------------------------------
     newGame = Option('new game')
     startOptions = [newGame, load, settings]
 
     startM = StartMenu(startOptions,'Main menu')
+    startM.setImage('menus/MainMenu.png')
 
 
     #-----------------------------battle menu---------------------------------
