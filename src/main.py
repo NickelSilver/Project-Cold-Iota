@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 import sys
 import time
 from PIL import Image #@UnresolvedImport
+from menus.menuManager import *
 
 
 from mapLogic import *
@@ -36,7 +37,7 @@ npcs = []
 firstRun = True #For the first cycle, make sure everything updates properly.
 npcCollider = False
 showText = False
-
+paused = False
 class Main():
 
     # A general OpenGL initialization function.  Sets all of the initial parameters.
@@ -228,9 +229,11 @@ class Main():
         self.updateMap()
 
 
+
     # The main drawing function.
     def DrawGLScene(self):
-        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, horizontalPos, npcs, npcList, npcCollider, showText, firstRun
+        global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
+            horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture
         if firstRun:
             self.update()
             firstRun = False
@@ -349,6 +352,7 @@ class Main():
             self.renderString(mapMovedHorizontal - movedHorizontal - 34, mapMovedVertical + -movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, b'boop')
             glColor3f(1.0,1.0,1.0)
 
+
         self.updateNPCs() #Now the real fun begins. For each and every NPC, draw a new quad and update the texture appropriately.
 
         transmatrixX = []
@@ -403,9 +407,14 @@ class Main():
 
     # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)
     def keyPressed(self, *args):
-        global holdingLeft, holdingRight, holdingUp, holdingDown, showText
+        global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused
         if args[0] == b"\033": # If escape is pressed, kill everything.
-            sys.exit()
+            #sys.exit()
+            if not paused:
+                paused = True
+            else:
+                paused = False
+
         elif (args[0] == b'w' or args[0] == b'W') and not showText:
             holdingUp = True
         elif (args[0] == b'a' or args[0] == b'A') and not showText:
@@ -477,13 +486,43 @@ class Main():
 
         glutTimerFunc(int(1000.0 / 60.0), self.mainLoop, 0)
 
+        #make mini Menu
+        self.makeMiniMenu()
         # Start Event Processing Engine
         glutMainLoop()
+
+
+    def makeMiniMenu(self):
+        VOID, SAVE, LOAD, QUIT = list(range(4))
+        #testing glut menu
+        createMenus()
+        def doquit():
+            sys.exit(0)
+
+        option1 = menuList[1].saveGame
+        option2 = menuList[1].loadGame
+        menudict = {SAVE: option1,
+                    LOAD:option2,
+                    QUIT: doquit}
+
+
+        def dmenu(item):
+            menudict[item]()
+            return 0
+        glutCreateMenu(dmenu)
+        glutAddMenuEntry("save", SAVE)
+        glutAddMenuEntry("load", LOAD)
+        glutAddMenuEntry("Quit", QUIT)
+        glutAttachMenu(GLUT_RIGHT_BUTTON)
 
     def mainLoop(self, val):
         self.update()
         self.DrawGLScene()
         glutTimerFunc(int(1000.0 / 60.0), self.mainLoop, val)
+
+
+
+
 
 #And here we go...fingers crossed.
 Main().main()
