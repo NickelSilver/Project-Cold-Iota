@@ -11,7 +11,7 @@ class Game:
 
     def loadGame(self):
 
-        gamefile = open(r'C:\Users\Matt\Computer Science\Python\SWScience\Project-Cold-Iota\src\data\Game1.txt','w')
+        gamefile = open(r'filelocation','w')
         gamedata = pickle.Unpickler(gamefile).load()
         return gamedata
 
