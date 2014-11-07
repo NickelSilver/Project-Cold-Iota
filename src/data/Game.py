@@ -2,11 +2,13 @@ __author__ = 'Matt'
 import pickle
 import os
 
+#class is in charge of persisting data from one map to the next.
 class Game():
     def __init__(self):
         #manages game state
         self.gamefile = ""
         self.currentmap = ""
+        #Some time of calculation, probably incremental.
         self.playerprogress = ""
 
 
@@ -48,3 +50,10 @@ class Game():
         self.playerprogress = progress
 
 
+#class Player(self):
+    #def __init__(self):
+        #gather items from protag
+      #  self.name
+       # self.health
+      # self.items
+       # self.progress
