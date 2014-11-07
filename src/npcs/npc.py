@@ -34,6 +34,19 @@ class npc:
     def getText(self):
         return self.text
     
+    def turnTowardPlayer(self, pfacing):
+        temp = self.facing
+        if pfacing == "up":
+            self.facing = "down"
+        elif pfacing == "down":
+            self.facing = "up"
+        elif pfacing == "left":
+            self.facing = "right"
+        elif pfacing == "right":
+            self.facing = "left"
+        if self.facing != temp:
+            self.updateFlag = True
+    
     def turnUp(self):
         self.facing = "up"
         self.updateSprite()

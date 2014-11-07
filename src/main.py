@@ -4,6 +4,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 import time
+import math
 from PIL import Image #@UnresolvedImport
 from menus.menuManager import *
 
@@ -32,7 +33,7 @@ horizontalPos = 0
 facing = "down"
 updateTime = 0
 texture = ""
-sceneMap = "town1"
+sceneMap = "map1"
 npcList = ""
 npcs = []
 firstRun = True #For the first cycle, make sure everything updates properly.
@@ -188,6 +189,10 @@ class Main():
         if sceneMap == "town1":
             image = Image.open("maps/town1.png")
             parallaxMap = Image.open("maps/town1parallax.bmp")
+            
+        elif sceneMap == "map1":
+            image = Image.open("maps/map1.png")
+            parallaxMap = Image.open("maps/map1parallax2.bmp")
 
         texture = sceneMap
 
@@ -278,19 +283,23 @@ class Main():
 
         for x in range(len(npcs)):
             if facing == "up":
-                if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
+                #if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
+                if abs(npcs[x].getVertical() - (verticalPos - 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
             elif facing == "down":
-                if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
+                #if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
+                if abs(npcs[x].getVertical() - (verticalPos + 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
             elif facing == "left":
-                if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
+                #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
+                if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos - 1)) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
             elif facing == "right":
-                if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
+                #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
+                if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos + 1)) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
 
@@ -409,6 +418,8 @@ class Main():
             #for ease of use, NPC coords are given using practical coords. Convert them to the OpenGL coords of our scene.
             transmatrixX.append((npcs[x].getHorizontal()-25)*2 + mapMovedHorizontal)
             transmatrixY.append((-npcs[x].getVertical()+15)*2 - vertOffset + mapMovedVertical)
+            if npcCollider:
+                facingNPC.turnTowardPlayer(facing)
 
             if npcs[x].getFlagForUpdate(): #Update the textures for each NPC.
                 image = Image.open(npcs[x].getSprite())
