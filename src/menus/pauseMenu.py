@@ -1,6 +1,7 @@
 __author__ = 'Andrea'
 
 from menus.menu import Menu
+import pickle
 
 class PauseMenu(Menu):
 
@@ -15,13 +16,17 @@ class PauseMenu(Menu):
         #restart all mov't, and clocks, everything
         pass
 
-    def saveGame(self):
+    def saveGame(self, gamedata):
         #implement save function here, note we are only going to alllow user's one save file for the time being
+        with open('save.pickle','wb') as f:
+            pickle.dump(gamedata,f)
         print("game has been saved")
 
     def loadGame(self):
         #implement load function here
-        pass
+        with open('save.pickle','rb') as f:
+            gamedata = pickle.load(f)
+        return gamedata
 
     def inventory(self):
         #show player their inventory, it'll probably be just another menu

@@ -493,6 +493,9 @@ class Main():
 
 
     def makeMiniMenu(self):
+        global movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
+            horizontalPos, facing, sceneMap,npcList, npcs
+
         VOID, SAVE, LOAD, QUIT = list(range(4))
         #testing glut menu
         createMenus()
@@ -507,7 +510,18 @@ class Main():
 
 
         def dmenu(item):
-            menudict[item]()
+            global movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
+            horizontalPos, facing, sceneMap,npcList, npcs
+            if item == SAVE:
+                saveobject = [movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,
+                    horizontalPos, facing, sceneMap,npcList, npcs]
+                menudict[item](saveobject)
+            elif item == LOAD:
+                loadList = menuList[1].loadGame()
+                movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
+            horizontalPos, facing, sceneMap,npcList, npcs = loadList
+            else:
+                menudict[item]()
             return 0
         glutCreateMenu(dmenu)
         glutAddMenuEntry("save", SAVE)
