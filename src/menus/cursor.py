@@ -35,7 +35,7 @@ class Cursor:
     def setImage(self, image):
         self.image = image
 
-    def getImgae(self):
+    def getImage(self):
         return self.image
 
     def getCount(self):

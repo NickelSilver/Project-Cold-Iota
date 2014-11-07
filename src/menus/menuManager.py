@@ -30,6 +30,7 @@ def createMenus():
     pauseOptions = [save,load,inventory,equipment,map,settings,exitOut]
 
     pauseM = PauseMenu(pauseOptions,'Paused',xpos=0,ypos=480)
+    pauseM.cursor.setImage('menus/cursor.png')
     pauseM.setImage('menus/Pause.png')
 
     #-----------------------start screen menu--------------------------------

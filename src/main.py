@@ -253,6 +253,8 @@ class Main():
 
         npcCollider = False
         facingNPC = None
+
+
         for x in range(len(npcs)):
             if facing == "up":
                 if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
@@ -351,6 +353,7 @@ class Main():
             glColor3f(0.0,0.0,0.0)
             self.renderString(mapMovedHorizontal - movedHorizontal - 34, mapMovedVertical + -movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, b'boop')
             glColor3f(1.0,1.0,1.0)
+
 
 
         self.updateNPCs() #Now the real fun begins. For each and every NPC, draw a new quad and update the texture appropriately.
