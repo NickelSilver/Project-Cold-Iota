@@ -10,6 +10,7 @@ from menus.menuManager import *
 
 from mapLogic import *
 from npcs.npcManager import *
+from menus.pauseMenu import *
 
 # NOTE: Some api in the chain is translating the keystrokes to this octal string
 # so instead of saying: ESCAPE = 27, we use ESCAPE = b"\033" where the b before the string converts it to bytes.
@@ -38,6 +39,11 @@ firstRun = True #For the first cycle, make sure everything updates properly.
 npcCollider = False
 showText = False
 paused = False
+hasNext = 0
+currentLine = 0
+selection = 0
+maxSelection = 0
+
 class Main():
 
     # A general OpenGL initialization function.  Sets all of the initial parameters.
@@ -203,6 +209,21 @@ class Main():
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+        
+    def bindMenuTextures(self):
+        image = Image.open("menus/MainMenu2.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 20) 
+        glBindTexture(GL_TEXTURE_2D, 20) #start in the 10-block of texture ID's, just to keep things simple. 
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
     def updateNPCs(self):
         global npcList, sceneMap, npcs
@@ -215,7 +236,7 @@ class Main():
 
 
     def update(self):
-        global updateTime, firstRun
+        #global firstRun,updateTime
         """
         elapsedTime = glutGet(GLUT_ELAPSED_TIME)
         if (elapsedTime - updateTime > 1000//30) or firstRun: #effectively the framerate. Adjust the denominator to adjust the FPS and the speeds of animation.
@@ -233,7 +254,7 @@ class Main():
     # The main drawing function.
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
-            horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture
+            horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused
         if firstRun:
             self.update()
             firstRun = False
@@ -241,7 +262,7 @@ class Main():
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()                    # Reset The View
 
-        glBindTexture(GL_TEXTURE_2D, 1)
+        glBindTexture(GL_TEXTURE_2D, 1) #the ID of our map texture. We won't use it for a while. 
 
         colliderUp = parallaxMap[((1568*32*(verticalPos-2)*4 + 1568*16*4)+(32*(horizontalPos-1) + 16)*4+1)] #each tile is 32x32 pixels. This returns the value of "green" colour in each pixel.
         try: #This can throw an index out of bounds exception. Catch it and set the collider appropriately.
@@ -275,7 +296,7 @@ class Main():
 
         if moving > 0:
             #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
-            offset = 2.0/(200)
+            offset = 2.0/200.0
             if facing == "up":
                 if colliderUp != 0 and verticalPos > 2 and not npcCollider:
                     mapMovedVertical -= offset
@@ -324,7 +345,7 @@ class Main():
 
 
         # Draw a square (quadrilateral)
-        glBegin(GL_QUADS)                   # Start drawing a 4 sided polygon
+        glBegin(GL_QUADS)                   # This represents our avatar character guy. The controllable one. 
         glTexCoord2f(0.0,1.0)
         glVertex3f(-1.0, 1.0, 0.0)          # Top Left
         glTexCoord2f(1.0,1.0)
@@ -338,9 +359,9 @@ class Main():
         if showText:
             x = 18.0
             y = 2.0
-            glTranslatef(0, -12, 0.1)
+            glTranslatef(movedHorizontal - mapMovedHorizontal, movedVertical - mapMovedVertical - 12, 0.1)
 
-            glBindTexture(GL_TEXTURE_2D, 100)
+            glBindTexture(GL_TEXTURE_2D, 100) #bind to some arbitrarily huge texture that's not likely to be bound to anything, thus producing a white rectangle. 
 
             glBegin(GL_QUADS) #draw textbox
             glVertex3f(-x, y, 0.0)          # Top Left
@@ -348,13 +369,36 @@ class Main():
             glVertex3f(x, -y, 0.0)          # Bottom Right
             glVertex3f(-x, -y, 0.0)         # Bottom Left
             glEnd()
+            
+            renderText = ""
 
             x = 5
             glColor3f(0.0,0.0,0.0)
-            self.renderString(mapMovedHorizontal - movedHorizontal - 34, mapMovedVertical + -movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, b'boop')
+            npcText = facingNPC.getText()
+            if currentLine < len(npcText) and currentLine >= 0:
+                renderText = npcText[currentLine]
+                currentLine += 1
+            else:
+                renderText = ""
+            renderText = bytes(renderText, "ascii")
+            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            if currentLine < len(npcText) and currentLine >= 0:
+                renderText = npcText[currentLine]
+                currentLine += 1
+            else:
+                renderText = ""
+            renderText = bytes(renderText, "ascii")
+            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 13, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            if currentLine >= len(npcText):
+                hasNext = False
+            else:
+                hasNext = True
+            if len(npcText) > 0:
+                currentLine -= 2
             glColor3f(1.0,1.0,1.0)
-
-
+        else:
+            currentLine = 0
+            hasNext = 0
 
         self.updateNPCs() #Now the real fun begins. For each and every NPC, draw a new quad and update the texture appropriately.
 
@@ -398,7 +442,51 @@ class Main():
             glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
             glEnd()
 
-
+        if paused:
+            glLoadIdentity()
+            glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1)
+            glTranslatef(-movedHorizontal, -movedVertical, 0.1)
+            glTranslatef(movedHorizontal - mapMovedHorizontal, movedVertical - mapMovedVertical, 0.1)
+            
+            maxSelection = 3
+            x = 18
+            y = 14
+            glColor3f(1.0,1.0,1.0)
+            glBindTexture(GL_TEXTURE_2D, 20)
+            glBegin(GL_QUADS)               #draw menu box
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(x, y, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            glTranslatef(0, 2.5, 0.1)
+            
+            x = 18
+            y = 1.5
+            glTranslatef(0, -3.15*selection, 0.0)
+            
+            glColor4f(0.0,0.5,1.0,0.33)
+            glBindTexture(GL_TEXTURE_2D, 100)
+            glBegin(GL_QUADS)               #draw menu box
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(x, y, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            
+            glColor4f(1.0,1.0,1.0,1.0)
+        else:
+            selection = 0
 
         #  since this is double buffered, swap the buffers to display what just got drawn.
         glutSwapBuffers()
@@ -410,26 +498,51 @@ class Main():
 
     # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)
     def keyPressed(self, *args):
-        global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused
-        if args[0] == b"\033": # If escape is pressed, kill everything.
-            #sys.exit()
+        global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
+        movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
+        sceneMap, npcList, npcs
+        if args[0] == b"\033" and not showText: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
             else:
                 paused = False
 
-        elif (args[0] == b'w' or args[0] == b'W') and not showText:
+        elif (args[0] == b'w' or args[0] == b'W') and not showText and not paused:
             holdingUp = True
-        elif (args[0] == b'a' or args[0] == b'A') and not showText:
+        elif (args[0] == b'a' or args[0] == b'A') and not showText and not paused:
             holdingLeft = True
-        elif (args[0] == b's' or args[0] == b'S') and not showText:
+        elif (args[0] == b's' or args[0] == b'S') and not showText and not paused:
             holdingDown = True
-        elif (args[0] == b'd' or args[0] == b'D') and not showText:
+        elif (args[0] == b'd' or args[0] == b'D') and not showText and not paused:
             holdingRight = True
-        elif args[0] == b'\015' and npcCollider and not showText:
+        elif (args[0] == b'w' or args[0] == b'W') and paused:
+            if selection > 0:
+                selection -= 1
+        elif (args[0] == b's' or args[0] == b'S') and paused:
+            if selection < maxSelection:
+                selection += 1
+        elif args[0] == b'\015' and npcCollider and not showText and not paused:
             showText = True
-        elif args[0] == b'\015' and showText:
+        elif args[0] == b'\015' and showText and not hasNext:
             showText = False
+        elif args[0] == b'\015' and showText and hasNext:
+            currentLine += 2
+        elif args[0] == b'\015' and paused:
+            if selection == 0: #save
+                saveobject = [movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,
+                    horizontalPos, facing, sceneMap,npcList, npcs]
+                PauseMenu.saveGame(self,saveobject)
+                paused = False
+            elif selection == 1: #load
+                loadList = PauseMenu.loadGame(self)
+                movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
+                horizontalPos, facing, sceneMap,npcList, npcs = loadList
+                paused = False
+            elif selection == 2: #settings
+                pass
+            elif selection == 3: #exit
+                sys.exit(0)
+            pass #placeholder for menu selection
 
     def keyReleased(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
@@ -486,6 +599,7 @@ class Main():
 
         # Initialize our window.
         self.InitGL(640, 480)
+        self.bindMenuTextures()
 
         glutTimerFunc(int(1000.0 / 60.0), self.mainLoop, 0)
 

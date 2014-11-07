@@ -17,10 +17,10 @@ class PauseMenu(Menu):
         pass
 
     def saveGame(self, gamedata):
-        #implement save function here, note we are only going to alllow user's one save file for the time being
+        #implement save function here, note we are only going to allow users one save file for the time being
         with open('save.pickle','wb') as f:
             pickle.dump(gamedata,f)
-        print("game has been saved")
+        #print("game has been saved")
 
     def loadGame(self):
         #implement load function here

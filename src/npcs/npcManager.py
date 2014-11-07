@@ -12,11 +12,12 @@ npcList = []
 def createNPCList(scene): #add NPC's here. Additional features will be added later.
     global npcList
     if scene == "town1":
-        npc1 = npc("town1", 7, 7, "down", "sprites/npc1SpriteSheet1.png")
-        npc1.setText(b"Geez, like, get out of my way!")
-        npc1.setText(b"Can't you see I'm brooding over here?")
+        npc1 = npc("town1", 21, 11, "down", "sprites/npc1SpriteSheet1.png")
+        npc1.setText("Geez, like, get out of my way!")
+        npc1.setText("Can't you see I'm brooding over here?")
+        npc1.setText("Just leave me alone!")
         npcList.append(npc1)
-        npc1 = npc("town1", 9, 9, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 7, 7, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 13, 8, "right", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
@@ -43,6 +44,9 @@ def createNPCList(scene): #add NPC's here. Additional features will be added lat
         npc1 = npc("town1", 19, 9, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 20, 9, "left", "sprites/npc1SpriteSheet1.png")
+        npc1.setText("Hi! I'm different!")
+        npc1.setText("Can't you tell?")
+        npc1.setText("I know me and my 14 brothers are similar, but...")
         npcList.append(npc1)
 
 def getNPCList():

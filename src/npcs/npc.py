@@ -30,6 +30,9 @@ class npc:
        
     def setText(self, line):
         self.text.append(line)
+        
+    def getText(self):
+        return self.text
     
     def turnUp(self):
         self.facing = "up"
