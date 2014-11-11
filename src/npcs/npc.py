@@ -9,9 +9,8 @@ from PIL import Image
 
     
 class npc:
-    
+    global facing, horizontalPos, verticalPos, mapID, sprite
     def __init__(self, mapish, h, v, direction, spritesheet):
-        global facing, horizontalPos, verticalPos, mapID, sprite
         self.mapID = mapish
         self.facing = direction
         self.horizontalPos = h
@@ -111,9 +110,11 @@ class npc:
                 self.moving = 500
             if self.sway and self.moving > 0:
                 self.box = (0, 96, 32, 128)
+                self.sway = False
             elif not self.sway and self.moving > 0:
                 self.box = (64, 96, 96, 128)
-            self.holdingUp = False #Reset. In other words, every time self.moveUp() is called, move up exactly one tile. 
+                self.sway = True
+            self.holdingUp = False #Reset. In other words, every time self.moveUp() is called, move up exactly one tile.
             return self.box
         elif self.holdingDown:
             self.facing = "down"
@@ -121,8 +122,10 @@ class npc:
                 self.moving = 500
             if self.sway and self.moving > 0:
                 self.box = (0, 0, 32, 32)
+                self.sway = False
             elif not self.sway and self.moving > 0:
                 self.box = (64, 0, 96, 32)
+                self.sway = True
             self.holdingDown = False
             return self.box
         elif self.holdingLeft:
@@ -131,8 +134,10 @@ class npc:
                 self.moving = 500
             if self.sway and self.moving > 0:
                 self.box = (0, 32, 32, 64)
+                self.sway = False
             elif not self.sway and self.moving > 0:
                 self.box = (64, 32, 96, 64)
+                self.sway = True
             self.holdingLeft = False
             return self.box
         elif self.holdingRight:
@@ -141,8 +146,10 @@ class npc:
                 self.moving = 500
             if self.sway and self.moving > 0:
                 self.box = (0, 64, 32, 96)
+                self.sway = False
             elif not self.sway and self.moving > 0:
                 self.box = (64, 64, 96, 96)
+                self.sway = True
             self.holdingRight = False
             return self.box
 

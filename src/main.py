@@ -44,6 +44,9 @@ hasNext = 0
 currentLine = 0
 selection = 0
 maxSelection = 0
+npcTimer = 0
+npcSteps = 0
+
 
 class Main():
 
@@ -259,7 +262,9 @@ class Main():
     # The main drawing function.
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
-            horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused
+            horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
+            npcTimer, npcSteps
+        npcTimer+=1
         if firstRun:
             self.update()
             firstRun = False
@@ -287,21 +292,25 @@ class Main():
                 if abs(npcs[x].getVertical() - (verticalPos - 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
+                    facingNPC.moving = 0
             elif facing == "down":
                 #if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
                 if abs(npcs[x].getVertical() - (verticalPos + 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
+                    facingNPC.moving = 0
             elif facing == "left":
                 #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
                 if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos - 1)) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
+                    facingNPC.moving = 0
             elif facing == "right":
                 #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
                 if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos + 1)) < 0.5:
                     npcCollider = True
                     facingNPC = npcs[x]
+                    facingNPC.moving = 0
 
         if moving > 0:
             #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
@@ -365,6 +374,8 @@ class Main():
         glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
         glEnd()                             # We are done with the polygon
 
+
+
         if showText:
             x = 18.0
             y = 2.0
@@ -414,12 +425,61 @@ class Main():
         transmatrixX = []
         transmatrixY=[]
 
+
         for x in range(len(npcs)):
             #for ease of use, NPC coords are given using practical coords. Convert them to the OpenGL coords of our scene.
             transmatrixX.append((npcs[x].getHorizontal()-25)*2 + mapMovedHorizontal)
             transmatrixY.append((-npcs[x].getVertical()+15)*2 - vertOffset + mapMovedVertical)
             if npcCollider:
                 facingNPC.turnTowardPlayer(facing)
+                facingNPC.moving = 0
+
+
+            if x%2==0 and npcTimer%100==0:
+                #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
+                if npcs[x].moving > 0:
+                    npcSteps+=1
+                    offset = 2.0/200.0
+                    if npcs[x].facing == "up":
+                        if colliderUp != 0 and npcs[x].verticalPos > 2 :
+                            npcs[x].verticalPos -= 2*offset
+                            npcs[x].flagForUpdate(True)
+                        elif colliderUp==0:
+                            npcs[x].facing = 'down'
+                        if npcSteps%10==0:
+                            npcs[x].facing = 'down'
+                            npcs[x].moving = 200
+                    elif npcs[x].facing == "down":
+                        if colliderDown != 0 and npcs[x].verticalPos < 29 :
+                            npcs[x].verticalPos += 2*offset
+                            npcs[x].flagForUpdate(True)
+                        elif colliderDown==0:
+                            npcs[x].facing = 'up'
+                        if npcSteps%10==0:
+                            npcs[x].facing = 'up'
+                            npcs[x].moving = 200
+
+                    '''elif npcs[x].facing == "left":
+                        if colliderLeft != 0 and npcs[x].horizontalPos > 1 :
+                            npcs[x].horizontalPos -= 2*offset
+                            npcs[x].flagForUpdate(True)
+                    elif npcs[x].facing == "right":
+                        if colliderRight != 0 and npcs[x].horizontalPos < 49 :
+                            npcs[x].horizontalPos += 2*offset
+                            npcs[x].flagForUpdate(True)
+                            '''
+                    npcs[x].moving -= 100
+                elif moving==0:
+
+                    if npcs[x].facing == "up"  and npcTimer%150:
+                        npcs[x].moveUp()
+                    elif npcs[x].facing == "down"and npcTimer%150:
+                        npcs[x].moveDown()
+                ''' elif npcs[x].facing == "left"  and npcTimer%150:
+                        npcs[x].moveLeft()
+                    elif npcs[x].facing == "right"  and npcTimer%150:
+                        npcs[x].moveRight()
+                        '''
 
             if npcs[x].getFlagForUpdate(): #Update the textures for each NPC.
                 image = Image.open(npcs[x].getSprite())
@@ -435,6 +495,7 @@ class Main():
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
                 npcs[x].flagForUpdate(False)
+
 
         for x in range(len(transmatrixX)): #Draw the NPC's quad objects and apply their textures.
             glLoadIdentity()
