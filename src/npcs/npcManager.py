@@ -1,6 +1,5 @@
 '''
 Created on 21 Oct 2014
-
 @author: Nickel
 '''
 
@@ -57,27 +56,27 @@ def createNPCList(scene): #add NPC's here. Additional features will be added lat
         npcList.append(npc1)
         npc1 = npc("town1", 7, 7, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 13, 8, "right", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 13, 20, "right", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 14, 6, "up", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 10, 9, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 15, 9, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 11, 13, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 28, 10, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 12, 12, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 13, 17, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 22, 17, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 14, 19, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 14, 23, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 15, 9, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 16, 23, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 18, 23, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 17, 1, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
-        npc1 = npc("town1", 18, 19, "left", "sprites/npc1SpriteSheet1.png")
+        npc1 = npc("town1", 20, 19, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
         npc1 = npc("town1", 19, 10, "left", "sprites/npc1SpriteSheet1.png")
         npcList.append(npc1)
