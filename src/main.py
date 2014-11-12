@@ -461,18 +461,12 @@ class Main():
                             npcs[x].flagForUpdate(True)
                         elif colliderUpNPC==0:
                             npcs[x].facing = 'down'
-                        if npcSteps%10==0:
-                            npcs[x].facing = 'down'
-                            npcs[x].moving = 200
                     elif npcs[x].facing == "down":
                         if colliderDownNPC != 0 and npcs[x].verticalPos < 29 :
                             npcs[x].verticalPos += 2*offset
                             npcs[x].flagForUpdate(True)
                         elif colliderDownNPC==0:
                             npcs[x].facing = 'up'
-                        if npcSteps%10==0:
-                            npcs[x].facing = 'up'
-                            npcs[x].moving = 200
 
                     elif npcs[x].facing == "left":
                         if colliderLeftNPC != 0 and npcs[x].horizontalPos > 1 :
@@ -485,23 +479,14 @@ class Main():
                             
                     npcs[x].moving -= 100
                 elif moving==0:
-                    direction = random.randrange(1, 4)
-                    '''if npcs[x].facing == "up"  and npcTimer%150:
-                        npcs[x].moveUp()
-                    elif npcs[x].facing == "down"and npcTimer%150:
-                        npcs[x].moveDown()
-                    elif npcs[x].facing == "left"  and npcTimer%150:
-                        npcs[x].moveLeft()
-                    elif npcs[x].facing == "right"  and npcTimer%150:
-                        npcs[x].moveRight()'''
+                    direction = random.randrange(1, 5)
                     if direction == 1:
                         npcs[x].moveRight()
                     elif direction == 2:
                         npcs[x].moveLeft()
                     elif direction == 3:
                         npcs[x].moveDown()
-                    elif direction == 4:
-                        npcs[x].facing = 'up'
+                    elif direction == 4 :
                         npcs[x].moveUp()
                         
 
