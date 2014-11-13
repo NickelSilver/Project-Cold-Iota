@@ -1,39 +1,41 @@
 <?xml version="1.0"?>
 <data>
-    <cinema id="0"></cinema>
-        <text>Satyst lays in his bed tossing and turning unable to sleep.
-        </text>
-        <text>
-            It's been centuries since he was last able to sleep.
-        </text>
-        <text>
-            He gets outs of his bed and gazes into his portal into another realm
-            spying on all the strange fleshy creatures sleeping soundly in their beds.
-        </text>
-            He comes across one in particular snuggled up with a stuffed creature,
-            and is instantly filled with jealousy.
-        <text>
-            He must possess that stuffed creature.
-        </text>
-        <text>
-            He whisks through the portal, sneaks up on the child (Somnolous)
-        </text>
-        <text>
-            and stealthily steals away with the child's stuffed bear.
-        </text>
-        <text>
-            The child awakes as Satyst leaps through the portal,
-            just conscious enough to realize his favorite stuffy is gone.
-        </text>
-        <text>
-            Immediately, he springs out of bed and follows through the portal.
-        </text>
-    <story id='0'>
+    <dialogue id="0">
+        <character id="Game">
+            Satyst lays in his bed tossing and turning unable to sleep.
+        </character>
+        <character id="Game">
+                It's been centuries since he was last able to sleep.
+        </character>
+        <character id="Game">
+                He gets outs of his bed and gazes into his portal into another realm
+                spying on all the strange fleshy creatures sleeping soundly in their beds.
+        </character>
+                He comes across one in particular snuggled up with a stuffed creature,
+                and is instantly filled with jealousy.
+        <character id="Game">
+                He must possess that stuffed creature.
+        </character>
+        <character id="Game">
+                He whisks through the portal, sneaks up on the child (Somnolous)
+        </character>
+        <character id="Game">
+                and stealthily steals away with the child's stuffed bear.
+        </character>
+        <character id="Game">
+                The child awakes as Satyst leaps through the portal,
+                just conscious enough to realize his favorite stuffy is gone.
+        </character>
+        <character id="Game">
+                Immediately, he springs out of bed and follows through the portal.
+        </character>
+    </dialogue>
+    <dialogue id='1'>
             <character id='Tutorial'>Hello! Welcome to Project Iota!  Let's go through the tutorial.  Hit enter to continue
             </character>
             <character id='Tutorial'>Let's go through some basic actions</character>
             <character id='Tutorial'>You can move your character using the characters W, S, A, D on your keyboard.  Try it out!</character>
             <character id="Tutorial">Be sure to save your game by checking out the pause menu (hit escape).</character>
             <character id="Nearby Voice">I hear you're looking for your teddy bear?  I may have some information for you...</character>
-    </story>
+    </dialogue>
 </data>

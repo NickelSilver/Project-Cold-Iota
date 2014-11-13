@@ -2,36 +2,36 @@ __author__ = 'Matt'
 
 import xml.etree.ElementTree as ET
 
+class xmlParser():
 
-def readStory(storyNumber):
+    def readDialogue(self, dialogueNumber):
 
-    tree = ET.parse('story.xml')
-    root = tree.getroot()
+        tree = ET.parse('data\story.xml')
+        root = tree.getroot()
 
-    storyroot = root
-    #search for appropriate story
-    for story in root:
-        #gets attribute
-        if story.get('id') == storyNumber:
-            storyroot = story
+        dialogueroot = ""
+        #search for appropriate story
 
-    characterList = []
-    textList = []
+        for dialogue in root.findall('dialogue'):
+            #gets attribute
 
-    for eachCharacter in storyroot.iter('character'):
-        #join game speech into two different lists, one list displays character, second list displays his/her speech.
-        character = eachCharacter.get('id')
-        text = eachCharacter.text
-        characterList.append(character)
-        textList.append(text)
-    return characterList, textList
+            if int(dialogue.get('id')) == int(dialogueNumber):
 
-    #test
+                dialogueroot = dialogue
+        if dialogueroot != "":
+            characterList = []
+            textList = []
 
-CharacterList, TextList = readStory('tutorial')
+            for eachCharacter in dialogueroot.iter('character'):
+                #join game speech into two different lists, one list displays character, second list displays his/her speech.
+                character = eachCharacter.get('id')
+                text = eachCharacter.text
+                characterList.append(character)
+                textList.append(text)
+            return characterList, textList
+        else:
+            return [],[]
 
 
-for index in range(len(CharacterList)):
-    print(CharacterList[index])
-    print(TextList[index])
+
 

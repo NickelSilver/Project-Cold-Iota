@@ -6,7 +6,7 @@ from menus.menu import *
 from menus.cursor import *
 from menus.option import *
 from data.Game import *
-
+from data.xmlParser import *
 class tests(unittest.TestCase):
 
     #-----------------maplogictests-------------------------
@@ -106,8 +106,18 @@ class tests(unittest.TestCase):
         #load back game
         gamedata = Game1.loadGame()
 
-        print(gamedata)
+        #print(gamedata)
         pass
+
+    def testDialogue(self):
+
+        reader = xmlParser()
+        CharacterList, TextList = reader.readDialogue(1)
+        for x in range(len(TextList)):
+            CharacterList[x],TextList[x]
+        pass
+
+
 
 if __name__ == '__main__':
     unittest.main()
