@@ -456,44 +456,45 @@ class Main():
                 facingNPC.moving = 0
 
 
-            if x%2==0 and npcTimer%100==0:
-                #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
-                if npcs[x].moving > 0:
-                    npcSteps+=1
-                    offset = 2.0/50.0 #I CHANGE HERE JUST TO SEE THE NPC WALKING FAST SO I COULD EASILY SEE IF THEY WERE HITTING THE WALLS
-                    if npcs[x].facing == "up":
-                        if colliderUpNPC != 0 and npcs[x].verticalPos > 2 :
-                            npcs[x].verticalPos -= 2*offset
-                            npcs[x].flagForUpdate(True)
-                        elif colliderUpNPC==0:
-                            npcs[x].facing = 'down'
-                    elif npcs[x].facing == "down":
-                        if colliderDownNPC != 0 and npcs[x].verticalPos < 29 :
-                            npcs[x].verticalPos += 2*offset
-                            npcs[x].flagForUpdate(True)
-                        elif colliderDownNPC==0:
-                            npcs[x].facing = 'up'
+            if not paused:
+                if x%2==0 and npcTimer%100==0:
+                    #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
+                    if npcs[x].moving > 0:
+                        npcSteps+=1
+                        offset = 2.0/50.0 #I CHANGE HERE JUST TO SEE THE NPC WALKING FAST SO I COULD EASILY SEE IF THEY WERE HITTING THE WALLS
+                        if npcs[x].facing == "up":
+                            if colliderUpNPC != 0 and npcs[x].verticalPos > 2 :
+                                npcs[x].verticalPos -= 2*offset
+                                npcs[x].flagForUpdate(True)
+                            elif colliderUpNPC==0:
+                                npcs[x].facing = 'down'
+                        elif npcs[x].facing == "down":
+                            if colliderDownNPC != 0 and npcs[x].verticalPos < 29 :
+                                npcs[x].verticalPos += 2*offset
+                                npcs[x].flagForUpdate(True)
+                            elif colliderDownNPC==0:
+                                npcs[x].facing = 'up'
 
-                    elif npcs[x].facing == "left":
-                        if colliderLeftNPC != 0 and npcs[x].horizontalPos > 1 :
-                            npcs[x].horizontalPos -= 2*offset
-                            npcs[x].flagForUpdate(True)
-                    elif npcs[x].facing == "right":
-                        if colliderRightNPC != 0 and npcs[x].horizontalPos < 49 :
-                            npcs[x].horizontalPos += 2*offset
-                            npcs[x].flagForUpdate(True)
-                            
-                    npcs[x].moving -= 100
-                elif moving==0:
-                    direction = random.randrange(1, 5)
-                    if direction == 1:
-                        npcs[x].moveRight()
-                    elif direction == 2:
-                        npcs[x].moveLeft()
-                    elif direction == 3:
-                        npcs[x].moveDown()
-                    elif direction == 4 :
-                        npcs[x].moveUp()
+                        elif npcs[x].facing == "left":
+                            if colliderLeftNPC != 0 and npcs[x].horizontalPos > 1 :
+                                npcs[x].horizontalPos -= 2*offset
+                                npcs[x].flagForUpdate(True)
+                        elif npcs[x].facing == "right":
+                            if colliderRightNPC != 0 and npcs[x].horizontalPos < 49 :
+                                npcs[x].horizontalPos += 2*offset
+                                npcs[x].flagForUpdate(True)
+
+                        npcs[x].moving -= 100
+                    elif moving==0:
+                        direction = random.randrange(1, 5)
+                        if direction == 1:
+                            npcs[x].moveRight()
+                        elif direction == 2:
+                            npcs[x].moveLeft()
+                        elif direction == 3:
+                            npcs[x].moveDown()
+                        elif direction == 4 :
+                            npcs[x].moveUp()
                         
 
             if npcs[x].getFlagForUpdate(): #Update the textures for each NPC.
