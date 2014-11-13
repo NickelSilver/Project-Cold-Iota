@@ -34,7 +34,7 @@ horizontalPos = 0
 facing = "down"
 updateTime = 0
 texture = ""
-sceneMap = "map1"
+sceneMap = "fortesmap"
 npcList = ""
 npcs = []
 firstRun = True #For the first cycle, make sure everything updates properly.
@@ -197,6 +197,12 @@ class Main():
         elif sceneMap == "map1":
             image = Image.open("maps/map1.png")
             parallaxMap = Image.open("maps/map1parallax2.bmp")
+        elif sceneMap == "pseudocampusmap":
+            image = Image.open("maps/pseudocampusmap.png")
+            parallaxMap = Image.open("maps/pseudocampusmapparallax.bmp")
+        elif sceneMap == "fortesmap":
+            image = Image.open("maps/fortesmap.png")
+            parallaxMap = Image.open("maps/fortesmapparallax.bmp")
 
         texture = sceneMap
 
