@@ -34,7 +34,7 @@ horizontalPos = 0
 facing = "down"
 updateTime = 0
 texture = ""
-sceneMap = "fortesmap"
+sceneMap = "map1"
 npcList = ""
 npcs = []
 firstRun = True #For the first cycle, make sure everything updates properly.
@@ -47,6 +47,7 @@ selection = 0
 maxSelection = 0
 npcTimer = 0
 npcSteps = 0
+
 
 
 class Main():
@@ -269,7 +270,7 @@ class Main():
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
             horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
-            npcTimer, npcSteps
+            npcTimer, npcSteps, tutorial
         npcTimer+=1
         if firstRun:
             self.update()
