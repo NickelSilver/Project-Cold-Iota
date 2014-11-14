@@ -47,7 +47,7 @@ selection = 0
 maxSelection = 0
 npcTimer = 0
 npcSteps = 0
-
+tutorial = True
 
 
 class Main():
@@ -382,51 +382,6 @@ class Main():
         glEnd()                             # We are done with the polygon
 
 
-
-        if showText:
-            x = 18.0
-            y = 2.0
-            glTranslatef(movedHorizontal - mapMovedHorizontal, movedVertical - mapMovedVertical - 12, 0.1)
-
-            glBindTexture(GL_TEXTURE_2D, 100) #bind to some arbitrarily huge texture that's not likely to be bound to anything, thus producing a white rectangle. 
-
-            glBegin(GL_QUADS) #draw textbox
-            glVertex3f(-x, y, 0.0)          # Top Left
-            glVertex3f(x, y, 0.0)           # Top Right
-            glVertex3f(x, -y, 0.0)          # Bottom Right
-            glVertex3f(-x, -y, 0.0)         # Bottom Left
-            glEnd()
-            
-            renderText = ""
-
-            x = 5
-            glColor3f(0.0,0.0,0.0)
-            npcText = facingNPC.getText()
-            if currentLine < len(npcText) and currentLine >= 0:
-                renderText = npcText[currentLine]
-                currentLine += 1
-            else:
-                renderText = ""
-            renderText = bytes(renderText, "ascii")
-            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
-            if currentLine < len(npcText) and currentLine >= 0:
-                renderText = npcText[currentLine]
-                currentLine += 1
-            else:
-                renderText = ""
-            renderText = bytes(renderText, "ascii")
-            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 13, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
-            if currentLine >= len(npcText):
-                hasNext = False
-            else:
-                hasNext = True
-            if len(npcText) > 0:
-                currentLine -= 2
-            glColor3f(1.0,1.0,1.0)
-        else:
-            currentLine = 0
-            hasNext = 0
-
         self.updateNPCs() #Now the real fun begins. For each and every NPC, draw a new quad and update the texture appropriately.
 
         transmatrixX = []
@@ -442,7 +397,7 @@ class Main():
             try: #This can throw an index out of bounds exception. Catch it and set the collider appropriately.
                 colliderDownNPC = parallaxMap[((1568*32*(vertical)*4 + 1568*16*4)+(32*(horizontal-1) + 16)*4+1)]
                 
-                 #When the background is white, it is 255. When it is magenta, it is 0.
+            #When the background is white, it is 255. When it is magenta, it is 0.
             except:
                 colliderDownNPC = 0
             colliderLeftNPC = parallaxMap[((1568*32*(vertical-1)*4 + 1568*16*4)+(32*(horizontal-2) + 16)*4+1)]
@@ -458,11 +413,12 @@ class Main():
 
 
             if not paused:
-                if x%2==0 and npcTimer%100==0:
+                if x%6==0 and npcTimer%10==0: #adjusted the speed and number of NPCs that move. 
                     #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
                     if npcs[x].moving > 0:
                         npcSteps+=1
-                        offset = 2.0/50.0 #I CHANGE HERE JUST TO SEE THE NPC WALKING FAST SO I COULD EASILY SEE IF THEY WERE HITTING THE WALLS
+                        offset = 2.0/200.0 #I CHANGE HERE JUST TO SEE THE NPC WALKING FAST SO I COULD EASILY SEE IF THEY WERE HITTING THE WALLS
+                        #Changed to align them to grid
                         if npcs[x].facing == "up":
                             if colliderUpNPC != 0 and npcs[x].verticalPos > 2 :
                                 npcs[x].verticalPos -= 2*offset
@@ -485,7 +441,7 @@ class Main():
                                 npcs[x].horizontalPos += 2*offset
                                 npcs[x].flagForUpdate(True)
 
-                        npcs[x].moving -= 100
+                        npcs[x].moving -= 10 #changed to align them to grid. 
                     elif moving==0:
                         direction = random.randrange(1, 5)
                         if direction == 1:
@@ -574,8 +530,75 @@ class Main():
             
             
             glColor4f(1.0,1.0,1.0,1.0)
+            
+        
+        #Relocated to fix NPCs rendering on top of text boxes. 
+        if showText:
+            x = 18.0
+            y = 2.0
+            glLoadIdentity()
+            glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1)
+            glTranslatef(-movedHorizontal, -movedVertical, 0.1)
+            glTranslatef(movedHorizontal - mapMovedHorizontal, movedVertical - mapMovedVertical - 12, 0.1)
+
+            glBindTexture(GL_TEXTURE_2D, 100) #bind to some arbitrarily huge texture that's not likely to be bound to anything, thus producing a white rectangle. 
+
+            glBegin(GL_QUADS) #draw textbox
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glVertex3f(x, y, 0.0)           # Top Right
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            renderText = ""
+            npcText = ""
+
+            x = 5
+            glColor3f(0.0,0.0,0.0)
+            if tutorial:
+                npcText = ["Press WASD to move around the world.","Press Enter to interact with people and objects.","Null"]
+            else:
+                try:
+                    npcText = facingNPC.getText()
+                except:
+                    pass
+                
+            if currentLine < len(npcText) and currentLine >= 0:
+                renderText = npcText[currentLine]
+                currentLine += 1
+            else:
+                renderText = ""
+            renderText = bytes(renderText, "ascii")
+            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 10, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            
+            if currentLine < len(npcText) and currentLine >= 0:
+                renderText = npcText[currentLine]
+                currentLine += 1
+            else:
+                renderText = ""
+            renderText = bytes(renderText, "ascii")
+            self.renderString(movedHorizontal - movedHorizontal - 34, movedVertical - movedVertical - 13, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+                
+            if currentLine >= len(npcText):
+                hasNext = False
+                if tutorial:
+                    tutorial = False
+                    showText = False
+            else:
+                hasNext = True
+            if len(npcText) > 0:
+                currentLine -= 2
+            glColor3f(1.0,1.0,1.0)
+        else:
+            currentLine = 0
+            hasNext = 0
+            
+        if tutorial:
+            showText = True
+
         else:
             selection = 0
+            
 
         #  since this is double buffered, swap the buffers to display what just got drawn.
         glutSwapBuffers()
