@@ -14,8 +14,8 @@ class monster:
         self.attack = 5*level
         self.defense = level
         self.level = level
-        self.currentHealth = health
-        self.currentMana = mana
+        self.currentHealth = self.health
+        self.currentMana = self.mana
 
     def loseHealth(self, amount):
         self.currentHealth = self.currentHealth - amount
@@ -26,7 +26,7 @@ class monster:
     def gainHealth(self,amount):
         self.currentHealth= self.currentHealth + amount
         #make sure it doesn't go over max health
-        if self.currentHealth > self.health
+        if self.currentHealth > self.health:
             self.health = self.currentHealth
 
     def loseMana(self, mana):
