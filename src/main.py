@@ -48,7 +48,7 @@ maxSelection = 0
 npcTimer = 0
 npcSteps = 0
 tutorial = True
-
+combat = False
 
 class Main():
 
@@ -270,7 +270,7 @@ class Main():
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
             horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
-            npcTimer, npcSteps, tutorial
+            npcTimer, npcSteps, tutorial, combat
         npcTimer+=1
         if firstRun:
             self.update()
@@ -531,7 +531,8 @@ class Main():
             
             glColor4f(1.0,1.0,1.0,1.0)
             
-        
+        if combat:
+            print ("The combat should be implemented here.")
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
             x = 18.0
@@ -559,7 +560,10 @@ class Main():
                 npcText = ["Press WASD to move around the world.","Press Enter to interact with people and objects.","Null"]
             else:
                 try:
-                    npcText = facingNPC.getText()
+                    if combat:
+                        npcText =  ["Let's fight!", "Now!"]
+                    else:
+                        npcText = facingNPC.getText()
                 except:
                     pass
                 
@@ -612,7 +616,7 @@ class Main():
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
         movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
-        sceneMap, npcList, npcs
+        sceneMap, npcList, npcs, combat
         if args[0] == b"\033" and not showText: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
@@ -634,9 +638,13 @@ class Main():
             if selection < maxSelection:
                 selection += 1
         elif args[0] == b'\015' and npcCollider and not showText and not paused:
+            dice = random.randrange(1, 100)
+            if (dice%5 == 0):
+                 combat = True
             showText = True
         elif args[0] == b'\015' and showText and not hasNext:
             showText = False
+            combat = False            
         elif args[0] == b'\015' and showText and hasNext:
             currentLine += 2
         elif args[0] == b'\015' and paused:
