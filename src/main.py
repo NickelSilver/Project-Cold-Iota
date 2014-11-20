@@ -50,6 +50,7 @@ npcTimer = 0
 npcSteps = 0
 tutorial = True
 combat = False
+town = False
 
 class Main():
 
@@ -87,7 +88,7 @@ class Main():
 
     #This animates our on-screen player character, or avatar.
     def updateAvatar(self):
-        global moving, sway, facing, npcList, combat
+        global moving, sway, facing, npcList, combat, town
 
         #If we've already got a movement animation, skip this function.
         if moving > 0:
@@ -144,7 +145,7 @@ class Main():
                 box = (64, 64, 96, 96)
                 image = image.crop(box)
 
-        if moving>0:
+        if moving>0 and not town:
             dice = random.randrange(1, 100)
             if (dice%10 == 0):
                  combat = True
