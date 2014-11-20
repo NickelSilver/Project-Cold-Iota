@@ -18,6 +18,7 @@ class monster:
         self.level = level
         self.currentHealth = self.health
         self.currentMana = self.mana
+
         #HOW MUCH the monster is worth
         self.experience = 100*level
         #these attributes are optional to a particular scene.
@@ -95,10 +96,9 @@ class monster:
     def speak(self):
         return ""
 
-
-
 #testing
-car = monster("Raptor","Raptorsprite", 3)
-print("attacked for:  ",car.attack)
-print(car.defend(15))
-print("Resulting damage done:  ",car.attack - car.defend(15))
+#car = monster("Raptor","Raptorsprite", 3)
+#print("attacked for:  ",car.attack)
+#print(car.defend(15))
+#print("Resulting damage done:  ",car.attack - car.defend(15))
+
