@@ -542,7 +542,7 @@ class Main():
             createMonsterPool(sceneMap)
             num = random.randint(0,len(monsterPool)-1)
             monster = monsterPool[num]
-            monster.level = random.randint(1,7)
+            monster.level = random.randint(levelMin,levelCap)
             print ("The combat should be implemented here.",monster.name,monster.level)
             combat = False
         #Relocated to fix NPCs rendering on top of text boxes. 
