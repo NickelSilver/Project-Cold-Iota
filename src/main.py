@@ -86,7 +86,7 @@ class Main():
 
     #This animates our on-screen player character, or avatar.
     def updateAvatar(self):
-        global moving, sway, facing, npcList
+        global moving, sway, facing, npcList, combat
 
         #If we've already got a movement animation, skip this function.
         if moving > 0:
@@ -142,6 +142,11 @@ class Main():
             elif not sway and moving > 0:
                 box = (64, 64, 96, 96)
                 image = image.crop(box)
+
+        if moving>0:
+            dice = random.randrange(1, 100)
+            if (dice%10 == 0):
+                 combat = True
 
         ix = image.size[0]
         iy = image.size[1]
@@ -533,6 +538,7 @@ class Main():
             
         if combat:
             print ("The combat should be implemented here.")
+            combat = False
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
             x = 18.0
