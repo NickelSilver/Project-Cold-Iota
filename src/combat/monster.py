@@ -3,6 +3,7 @@ __author__ = 'Matt'
 #methods in this
 import random
 import math
+import decimal
 
 class monster:
 
@@ -18,7 +19,7 @@ class monster:
         self.level = level
         self.currentHealth = self.health
         self.currentMana = self.mana
-
+        self.loot = ""
         #HOW MUCH the monster is worth
         self.experience = 100*level
         #these attributes are optional to a particular scene.
@@ -37,6 +38,9 @@ class monster:
         if self.currentHealth > self.health:
             self.health = self.currentHealth
 
+    def getCurrentHealth(self):
+        return self.currentHealth
+
     def loseMana(self, mana):
         self.currentMana = self.currentMana - mana
         if self.currentMana < 0:
@@ -47,10 +51,13 @@ class monster:
         if self.mana > self.mana:
             self.currentMana = self.mana
 
-    def attack(self):
+    def getCurrentMana(self):
+        return self.currentMana
+
+    def attackHero(self):
         #damage a random amount
-        amplifier = random.randrange(.8,1.2,.1)
-        result = self.attack*amplifier
+        amplifier = random.uniform(.8,1.2)
+        result = int(self.attack*amplifier)
         return result
 
     def defend(self, attack):
@@ -61,6 +68,8 @@ class monster:
         if block > .5:
             block = .5
         defense = float((block)*attack)
+        #lose health
+        self.loseHealth(attack-defense)
         #return the amount defended.
         return defense
 
@@ -92,9 +101,12 @@ class monster:
     def getExperience(self):
         return self.experience
 
+    def dropLoot(self):
+        return self.loot
 
-    def speak(self):
-        return ""
+    def speak(self, text):
+        sentence = self.name,":  ", text
+        return sentence
 
 #testing
 #car = monster("Raptor","Raptorsprite", 3)

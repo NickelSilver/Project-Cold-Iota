@@ -7,6 +7,8 @@ from menus.cursor import *
 from menus.option import *
 from data.Game import *
 from data.xmlParser import *
+from combat.monster import *
+
 class tests(unittest.TestCase):
 
     #-----------------maplogictests-------------------------
@@ -117,7 +119,23 @@ class tests(unittest.TestCase):
             CharacterList[x],TextList[x]
         pass
 
-
+    def testMonster(self):
+        monster1 = monster('Spidronus', 'monsters/spidermonster1.png', 5)
+        monster1.loseHealth(30)
+        #print(monster1.getCurrentHealth())
+        monster1.gainHealth(30)
+        #print(monster1.getCurrentHealth())
+        monster1.loseMana(25)
+        #print(monster1.getCurrentMana())
+        monster1.gainMana(40)
+        #print(monster1.getCurrentMana())
+        #print("Attack:  ",monster1.attackHero())
+        #print("Defense:  ",monster1.defend(monster1.attackHero()))
+        #print(monster1.getCurrentHealth())
+        monster1.loseHealth(500)
+        monster1.loseMana(500)
+        monster1.isDead()
+        pass
 
 if __name__ == '__main__':
     unittest.main()
