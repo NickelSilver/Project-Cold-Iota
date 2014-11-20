@@ -134,8 +134,8 @@ class tests(unittest.TestCase):
         #print(monster1.getCurrentHealth())
         monster1.loseHealth(500)
         monster1.loseMana(500)
-        monster1.isDead()
-        pass
+        self.assertTrue(monster1.isDead())
+
 
 if __name__ == '__main__':
     unittest.main()
