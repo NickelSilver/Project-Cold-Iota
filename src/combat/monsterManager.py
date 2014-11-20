@@ -6,7 +6,8 @@ levelMin = 1
 levelCap = 0
 
 def createMonsterPool(scene):
-    global monsterPool, levelCap
+    global monsterPool, levelCap, levelMin
+    monsterPool = [] #empties monster pool each time
 
     if scene == 'map1':
         levelCap = 7
@@ -33,5 +34,11 @@ def createMonsterPool(scene):
         monster1 = monster('Drule', 'monsters/batmonster1.png', 1)
         monsterPool.append(monster1)
 
+def getLevelCap():
+    return levelCap
+def getLevelMin():
+    return levelMin
+def getMonsterPool():
+    return monsterPool
 
 

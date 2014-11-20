@@ -540,9 +540,12 @@ class Main():
             
         if combat:
             createMonsterPool(sceneMap)
-            num = random.randint(0,len(monsterPool)-1)
-            monster = monsterPool[num]
-            monster.level = random.randint(levelMin,levelCap)
+            monsters = getMonsterPool()
+            num = random.randint(0,len(monsters)-1)
+            monster = monsters[num]
+            levelMax = getLevelCap()
+            minLevel = levelMin
+            monster.level = random.randint(minLevel, levelMax)
             print ("The combat should be implemented here.",monster.name,monster.level)
             combat = False
         #Relocated to fix NPCs rendering on top of text boxes. 
