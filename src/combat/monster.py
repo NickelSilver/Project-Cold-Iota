@@ -59,7 +59,8 @@ class monster:
 
 
 #testing
-car = monster("Raptor","Raptorsprite", 3)
+'''car = monster("Raptor","Raptorsprite", 3)
 print("attacked for:  ",car.attack)
 print(car.defend(15))
 print("Resulting damage done:  ",car.attack - car.defend(15))
+'''

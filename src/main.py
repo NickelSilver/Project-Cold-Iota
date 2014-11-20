@@ -8,6 +8,7 @@ import random
 import math
 from PIL import Image #@UnresolvedImport
 from menus.menuManager import *
+from combat.monsterManager import *
 
 
 from mapLogic import *
@@ -537,7 +538,11 @@ class Main():
             glColor4f(1.0,1.0,1.0,1.0)
             
         if combat:
-            print ("The combat should be implemented here.")
+            createMonsterPool(sceneMap)
+            num = random.randint(0,len(monsterPool)-1)
+            monster = monsterPool[num]
+            monster.level = random.randint(1,7)
+            print ("The combat should be implemented here.",monster.name,monster.level)
             combat = False
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
