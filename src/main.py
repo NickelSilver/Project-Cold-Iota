@@ -544,7 +544,7 @@ class Main():
             num = random.randint(0,len(monsters)-1)
             monster = monsters[num]
             levelMax = getLevelCap()
-            minLevel = levelMin
+            minLevel = getLevelMin()
             monster.level = random.randint(minLevel, levelMax)
             print ("The combat should be implemented here.",monster.name,monster.level)
             combat = False
