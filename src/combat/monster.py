@@ -1,10 +1,12 @@
 __author__ = 'Matt'
 
+#methods in this
 import random
 import math
 
 class monster:
 
+    #default values for a monster.  Monster will scale based on level chosen.
     def __init__(self, name, sprite, level):
         self.name = name
         self.sprite = sprite
@@ -14,8 +16,13 @@ class monster:
         self.attack = 5*level
         self.defense = level
         self.level = level
-        self.currentHealth = health
-        self.currentMana = mana
+        self.currentHealth = self.health
+        self.currentMana = self.mana
+        #HOW MUCH the monster is worth
+        self.experience = 100*level
+        #these attributes are optional to a particular scene.
+        #used to increase bonuses (attack, defense)
+        self.tempBonus = 0
 
     def loseHealth(self, amount):
         self.currentHealth = self.currentHealth - amount
@@ -26,7 +33,7 @@ class monster:
     def gainHealth(self,amount):
         self.currentHealth= self.currentHealth + amount
         #make sure it doesn't go over max health
-        if self.currentHealth > self.health
+        if self.currentHealth > self.health:
             self.health = self.currentHealth
 
     def loseMana(self, mana):
@@ -45,7 +52,6 @@ class monster:
         result = self.attack*amplifier
         return result
 
-
     def defend(self, attack):
         #uses defense value to calculate damage done.
         defense = self.defense
@@ -56,6 +62,39 @@ class monster:
         defense = float((block)*attack)
         #return the amount defended.
         return defense
+
+    def increaseAttackBonus(self, amount):
+        #increases attack for a temporary amount of time
+        self.tempBonus = amount
+
+    def removeBonus(self):
+        self.tempBonus = 0
+
+    def increaseDefBonus(self, amount):
+        self.tempBonus = amount
+
+    #when monster is defeated
+
+    def isDead(self):
+        if self.currentHealth == 0:
+            #die
+            return True
+        else:
+            return False
+
+    def hasMana(self, spellMana):
+        if spellMana > self.currentMana:
+            return False
+        else:
+            return True
+
+    def getExperience(self):
+        return self.experience
+
+
+    def speak(self):
+        return ""
+
 
 
 #testing
