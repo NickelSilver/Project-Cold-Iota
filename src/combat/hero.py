@@ -1,14 +1,16 @@
 __author__ = 'Andrea'
 
 class hero:
-    health = 100
-    speed = 10
-    mana = 100
-    attack = 5
-    defense = 3
-    level = 1
-    experience = 0
-    XPneeded = 100
+    
+    def __init__(self):
+        self.health = 100
+        self.speed = 10
+        self.mana = 100
+        self.attack = 5
+        self.defense = 3
+        self.level = 1
+        self.experience = 0
+        self.XPneeded = 100
 
     def fight(self):
         pass
@@ -21,4 +23,9 @@ class hero:
 
     def levelUp(self):
         pass
-
+    
+    def isDead(self):
+        if self.health == 0:
+            return True
+        else:
+            return False

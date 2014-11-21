@@ -9,6 +9,7 @@ import math
 from PIL import Image #@UnresolvedImport
 from menus.menuManager import *
 from combat.monsterManager import *
+from combat.hero import *
 
 
 from mapLogic import *
@@ -51,6 +52,10 @@ npcSteps = 0
 tutorial = True
 combat = False
 town = False
+protag = hero()
+hasMonster = False
+monster = None
+combatAction = 0
 
 class Main():
 
@@ -148,7 +153,8 @@ class Main():
         if moving>0 and not town:
             dice = random.randrange(1, 100)
             if (dice%10 == 0):
-                 combat = True
+                combat = True
+                paused = True
 
         ix = image.size[0]
         iy = image.size[1]
@@ -242,7 +248,77 @@ class Main():
         image = image.tostring("raw", "RGBA", 0, -1)
 
         glGenTextures(1, 20) 
-        glBindTexture(GL_TEXTURE_2D, 20) #start in the 10-block of texture ID's, just to keep things simple. 
+        glBindTexture(GL_TEXTURE_2D, 20) #start in the 20-block of texture ID's, just to keep things simple. 
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        image = Image.open("combat/battleback.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 21) 
+        glBindTexture(GL_TEXTURE_2D, 21)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        image = Image.open("monsters/batmonster1.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 21) 
+        glBindTexture(GL_TEXTURE_2D, 40) #begin in the unused 40-block
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        image = Image.open("monsters/chickenmonster1.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 21) 
+        glBindTexture(GL_TEXTURE_2D, 41)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        image = Image.open("monsters/ghostmonster1.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 21) 
+        glBindTexture(GL_TEXTURE_2D, 42)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        image = Image.open("monsters/spidermonster1.png")
+
+        ix = image.size[0]
+        iy = image.size[1]
+
+        image = image.tostring("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, 21) 
+        glBindTexture(GL_TEXTURE_2D, 43)
         glPixelStorei(GL_UNPACK_ALIGNMENT,1)
         glTexImage2D(GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -277,7 +353,7 @@ class Main():
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
             horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
-            npcTimer, npcSteps, tutorial, combat
+            npcTimer, npcSteps, tutorial, combat, protag, hasMonster, monster, combatAction
         npcTimer+=1
         if firstRun:
             self.update()
@@ -419,7 +495,7 @@ class Main():
                 facingNPC.moving = 0
 
 
-            if not paused:
+            if not paused and not combat:
                 if x%6==0 and npcTimer%10==0: #adjusted the speed and number of NPCs that move. 
                     #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
                     if npcs[x].moving > 0:
@@ -494,7 +570,7 @@ class Main():
             glVertex3f(-1.0, -1.0, 0.0)         # Bottom Left
             glEnd()
 
-        if paused:
+        if paused and not combat:
             glLoadIdentity()
             glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1)
             glTranslatef(-movedHorizontal, -movedVertical, 0.1)
@@ -539,15 +615,120 @@ class Main():
             glColor4f(1.0,1.0,1.0,1.0)
             
         if combat:
-            createMonsterPool(sceneMap)
-            monsters = getMonsterPool()
-            num = random.randint(0,len(monsters)-1)
-            monster = monsters[num]
-            levelMax = getLevelCap()
-            minLevel = getLevelMin()
-            monster.level = random.randint(minLevel, levelMax)
-            print ("The combat should be implemented here.",monster.name,monster.level)
-            combat = False
+            glLoadIdentity()
+            glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1)
+            glTranslatef(-movedHorizontal, -movedVertical, 0.1)
+            glTranslatef(movedHorizontal - mapMovedHorizontal, movedVertical - mapMovedVertical, 0.1)
+            
+            if not hasMonster:
+                createMonsterPool(sceneMap)
+                monsters = getMonsterPool()
+                num = random.randint(0,len(monsters)-1)
+                monster = monsters[num]
+                levelMax = getLevelCap()
+                minLevel = getLevelMin()
+                monster.level = random.randint(minLevel, levelMax)
+                selection = 0
+                hasMonster = True
+                paused = True
+            #print ("The combat should be implemented here.",monster.name,monster.level)
+            x = 18
+            y = 14
+            
+            glColor3f(1.0,1.0,1.0)
+            glBindTexture(GL_TEXTURE_2D, 21)
+            glBegin(GL_QUADS)               #draw menu box
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(x, y, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            x = 9
+            y = 7
+            glTranslatef(0, 2.5, 0.1)
+            if monster.name == "Spidronus":
+                glBindTexture(GL_TEXTURE_2D, 43)
+            elif monster.name == "Pickles":
+                glBindTexture(GL_TEXTURE_2D, 41)
+            elif monster.name == "Drule":
+                glBindTexture(GL_TEXTURE_2D, 40)
+            else:
+                glBindTexture(GL_TEXTURE_2D, 42)
+            glBegin(GL_QUADS)               #draw menu box
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(x, y, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            x = 4
+            y = 3
+            glTranslatef(-12,-11.5,0.1)
+            
+            glBindTexture(GL_TEXTURE_2D, 100) #bind to some arbitrarily huge texture that's not likely to be bound to anything, thus producing a white rectangle. 
+            
+            glColor4f(1.0,1.0,1.0,0.33)
+            glBegin(GL_QUADS) #draw textbox
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glVertex3f(x, y, 0.0)           # Top Right
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            y = 4
+            
+            glColor3f(0.0,0.0,0.0)
+            renderText = "Attack"
+            renderText = bytes(renderText, "ascii")
+            self.renderString(-x - 15, -y - 1, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            
+            renderText = "Defend"
+            renderText = bytes(renderText, "ascii")
+            self.renderString(-x - 15, -y - 4, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            
+            renderText = "Magic"
+            renderText = bytes(renderText, "ascii")
+            self.renderString(-x - 15, -y - 7, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            
+            renderText = "Run"
+            renderText = bytes(renderText, "ascii")
+            self.renderString(-x - 15, -y - 10, -31.8, GLUT_BITMAP_HELVETICA_18, renderText)
+            
+            maxSelection = 3
+            
+            glTranslatef(0, 2.25, 0.0)
+            glTranslatef(0, -1.5*selection, 0.0)
+            
+            y = 0.75
+            
+            glColor4f(0.0,0.5,1.0,0.33)
+            glBindTexture(GL_TEXTURE_2D, 100)
+            glBegin(GL_QUADS)               #draw menu box
+            glTexCoord2f(0.0,1.0)
+            glVertex3f(-x, y, 0.0)          # Top Left
+            glTexCoord2f(1.0,1.0)
+            glVertex3f(x, y, 0.0)           # Top Right
+            glTexCoord2f(1.0,0.0)
+            glVertex3f(x, -y, 0.0)          # Bottom Right
+            glTexCoord2f(0.0,0.0)
+            glVertex3f(-x, -y, 0.0)         # Bottom Left
+            glEnd()
+            
+            glColor3f(1.0,1.0,1.0)
+            if monster.isDead() or protag.isDead() or combatAction == 4:
+                combat = False
+                hasMonster = False
+                paused = False
+                combatAction = 0
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
             x = 18.0
@@ -614,9 +795,6 @@ class Main():
             
         if tutorial:
             showText = True
-
-        else:
-            selection = 0
             
 
         #  since this is double buffered, swap the buffers to display what just got drawn.
@@ -631,8 +809,8 @@ class Main():
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
         movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
-        sceneMap, npcList, npcs, combat
-        if args[0] == b"\033" and not showText: # If escape is pressed, bring up the pause menu.
+        sceneMap, npcList, npcs, combat, combatAction
+        if args[0] == b"\033" and not showText and not combat: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
             else:
@@ -655,14 +833,17 @@ class Main():
         elif args[0] == b'\015' and npcCollider and not showText and not paused:
             dice = random.randrange(1, 100)
             if (dice%5 == 0):
-                 combat = True
+                combat = True
+                paused = True
             showText = True
         elif args[0] == b'\015' and showText and not hasNext:
             showText = False
-            combat = False            
+            #combat = False
+            if not combat:
+                paused = False       
         elif args[0] == b'\015' and showText and hasNext:
             currentLine += 2
-        elif args[0] == b'\015' and paused:
+        elif args[0] == b'\015' and paused and not combat:
             if selection == 0: #save
                 saveobject = [movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,
                     horizontalPos, facing, sceneMap,npcList, npcs]
@@ -678,6 +859,8 @@ class Main():
             elif selection == 3: #exit
                 sys.exit(0)
             pass #placeholder for menu selection
+        elif args[0] == b'\015' and combat:
+            combatAction = selection + 1
 
     def keyReleased(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
