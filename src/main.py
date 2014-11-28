@@ -782,6 +782,10 @@ class Main():
                 paused = False
                 combatAction = 0
                 battleTurn = 0
+                if protagonist.isDead():
+                    print("Game over, start the game again and reload")
+                    sys.exit(0)
+
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
             x = 18.0
@@ -862,7 +866,7 @@ class Main():
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
         movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
-        sceneMap, npcList, npcs, combat, combatAction, battleTurn
+        sceneMap, npcList, npcs, combat, combatAction, battleTurn, protagonist
         if args[0] == b"\033" and not showText and not combat: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
@@ -899,13 +903,13 @@ class Main():
         elif args[0] == b'\015' and paused and not combat:
             if selection == 0: #save
                 saveobject = [movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,
-                    horizontalPos, facing, sceneMap,npcList, npcs]
+                    horizontalPos, facing, sceneMap,npcList, npcs,protagonist]
                 PauseMenu.saveGame(self,saveobject)
                 paused = False
             elif selection == 1: #load
                 loadList = PauseMenu.loadGame(self)
                 movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
-                horizontalPos, facing, sceneMap,npcList, npcs = loadList
+                horizontalPos, facing, sceneMap,npcList, npcs, protagonist = loadList
                 paused = False
             elif selection == 2: #settings
                 pass
@@ -984,7 +988,7 @@ class Main():
 
     def makeMiniMenu(self):
         global movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
-            horizontalPos, facing, sceneMap,npcList, npcs
+            horizontalPos, facing, sceneMap,npcList, npcs, protagonist
 
         VOID, SAVE, LOAD, QUIT = list(range(4))
         #testing glut menu
@@ -1001,15 +1005,15 @@ class Main():
 
         def dmenu(item):
             global movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
-            horizontalPos, facing, sceneMap,npcList, npcs
+            horizontalPos, facing, sceneMap,npcList, npcs,protagonist
             if item == SAVE:
                 saveobject = [movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,
-                    horizontalPos, facing, sceneMap,npcList, npcs]
+                    horizontalPos, facing, sceneMap,npcList, npcs, protagonist]
                 menudict[item](saveobject)
             elif item == LOAD:
                 loadList = menuList[1].loadGame()
                 movedVertical,vertOffset, movedHorizontal,mapMovedVertical, mapMovedHorizontal,verticalPos,\
-            horizontalPos, facing, sceneMap,npcList, npcs = loadList
+            horizontalPos, facing, sceneMap,npcList, npcs, protagonist = loadList
             else:
                 menudict[item]()
             return 0
