@@ -62,16 +62,16 @@ class monster:
 
     def defend(self, attack):
         #uses defense value to calculate damage done.
-        defense = self.defense
-        block = (defense*5)/(100)
+        defending = self.defense
+        block = (defending*5)/(100)
         ##never go above a %50 block value
         if block > .5:
             block = .5
-        defense = float((block)*attack)
+        defending = float((block)*attack)
         #lose health
-        self.loseHealth(attack-defense)
+        self.loseHealth(attack-defending)
         #return the amount defended.
-        return defense
+        return defending
 
     def increaseAttackBonus(self, amount):
         #increases attack for a temporary amount of time
@@ -107,6 +107,8 @@ class monster:
     def speak(self, text):
         sentence = self.name,":  ", text
         return sentence
+
+
 
 #testing
 #car = monster("Raptor","Raptorsprite", 3)

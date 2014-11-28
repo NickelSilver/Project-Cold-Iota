@@ -52,12 +52,30 @@ npcSteps = 0
 tutorial = True
 combat = False
 town = False
-protag = hero()
 hasMonster = False
 monster = None
 combatAction = 0
+protagonist = hero('Somnolous', 1)
+battleTurn = 0 #0 for character turn, 1 for enemy turn
+protagDefend = False
+monDefend = False
+
 
 class Main():
+
+    def monsterTurn(self, enemyMon):
+        global protagonist, battleTurn, monDefend, protagDefend
+        option = random.randint(0,2)
+        if option==0:
+            monDefend = True
+        else:
+            monDefend = False
+            if protagDefend:
+                protagonist.defend(enemyMon.attackHero())
+            else:
+                protagonist.loseHealth(enemyMon.attackHero())
+        battleTurn-=1
+
 
     # A general OpenGL initialization function.  Sets all of the initial parameters.
     def InitGL(self, Width, Height):                # We call this right after our OpenGL window is created.
@@ -353,7 +371,8 @@ class Main():
     def DrawGLScene(self):
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
             horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
-            npcTimer, npcSteps, tutorial, combat, protag, hasMonster, monster, combatAction
+            npcTimer, npcSteps, tutorial, combat, hasMonster, monster, combatAction, enemyDef, protagonist, battleTurn,\
+            monDefend, protagDefend
         npcTimer+=1
         if firstRun:
             self.update()
@@ -375,32 +394,32 @@ class Main():
         npcCollider = False
         facingNPC = None
 
-
-        for x in range(len(npcs)):
-            if facing == "up":
-                #if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
-                if abs(npcs[x].getVertical() - (verticalPos - 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
-                    npcCollider = True
-                    facingNPC = npcs[x]
-                    facingNPC.moving = 0
-            elif facing == "down":
-                #if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
-                if abs(npcs[x].getVertical() - (verticalPos + 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
-                    npcCollider = True
-                    facingNPC = npcs[x]
-                    facingNPC.moving = 0
-            elif facing == "left":
-                #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
-                if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos - 1)) < 0.5:
-                    npcCollider = True
-                    facingNPC = npcs[x]
-                    facingNPC.moving = 0
-            elif facing == "right":
-                #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
-                if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos + 1)) < 0.5:
-                    npcCollider = True
-                    facingNPC = npcs[x]
-                    facingNPC.moving = 0
+        if not combat:
+            for x in range(len(npcs)):
+                if facing == "up":
+                    #if npcs[x].getVertical() == verticalPos - 1 and npcs[x].getHorizontal() == horizontalPos:
+                    if abs(npcs[x].getVertical() - (verticalPos - 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
+                        npcCollider = True
+                        facingNPC = npcs[x]
+                        facingNPC.moving = 0
+                elif facing == "down":
+                    #if npcs[x].getVertical() == verticalPos + 1 and npcs[x].getHorizontal() == horizontalPos:
+                    if abs(npcs[x].getVertical() - (verticalPos + 1)) < 0.5 and abs(npcs[x].getHorizontal() - horizontalPos) < 0.5:
+                        npcCollider = True
+                        facingNPC = npcs[x]
+                        facingNPC.moving = 0
+                elif facing == "left":
+                    #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos - 1:
+                    if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos - 1)) < 0.5:
+                        npcCollider = True
+                        facingNPC = npcs[x]
+                        facingNPC.moving = 0
+                elif facing == "right":
+                    #if npcs[x].getVertical() == verticalPos and npcs[x].getHorizontal() == horizontalPos + 1:
+                    if abs(npcs[x].getVertical() - verticalPos) < 0.5 and abs(npcs[x].getHorizontal() - (horizontalPos + 1)) < 0.5:
+                        npcCollider = True
+                        facingNPC = npcs[x]
+                        facingNPC.moving = 0
 
         if moving > 0:
             #offset = 2.0/(500.0 - 25.0*len(npcs)*0.9)
@@ -615,6 +634,7 @@ class Main():
             glColor4f(1.0,1.0,1.0,1.0)
             
         if combat:
+
             glLoadIdentity()
             glTranslatef(mapMovedHorizontal, mapMovedVertical, -32.1)
             glTranslatef(-movedHorizontal, -movedVertical, 0.1)
@@ -631,6 +651,7 @@ class Main():
                 selection = 0
                 hasMonster = True
                 paused = True
+
             #print ("The combat should be implemented here.",monster.name,monster.level)
             x = 18
             y = 14
@@ -724,7 +745,31 @@ class Main():
             glEnd()
             
             glColor3f(1.0,1.0,1.0)
-            if monster.isDead() or protag.isDead() or combatAction == 4:
+
+            if battleTurn==0:
+                if combatAction==1:
+                    combatAction = 0
+                    protagDefend = False
+                    if monDefend:
+                        monster.defend(protagonist.attackMonster())
+                    else:
+                        monster.loseHealth(protagonist.attackMonster())
+                        print('enemy health: '+str(monster.currentHealth)+'\nYour health: ' +str(protagonist.currentHealth))
+                    battleTurn+=1
+                elif combatAction==2:
+                    protagDefend = True
+                    combatAction = 0
+                    battleTurn+=1
+                elif combatAction==3:
+                    protagDefend = False
+                    combatAction = 0
+                    battleTurn+=1
+
+            else:
+                self.monsterTurn(monster)
+                print('enemy health: '+str(monster.currentHealth)+'\nYour health: ' +str(protagonist.currentHealth))
+
+            if monster.isDead() or protagonist.isDead() or combatAction == 4:
                 combat = False
                 hasMonster = False
                 paused = False
@@ -809,7 +854,7 @@ class Main():
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
         movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
-        sceneMap, npcList, npcs, combat, combatAction
+        sceneMap, npcList, npcs, combat, combatAction, battleTurn
         if args[0] == b"\033" and not showText and not combat: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
@@ -862,6 +907,7 @@ class Main():
         elif args[0] == b'\015' and combat:
             combatAction = selection + 1
 
+
     def keyReleased(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown
         if args[0] == b'w' or args[0] == b'W':
@@ -872,6 +918,7 @@ class Main():
             holdingDown = False
         elif args[0] == b'd' or args[0] == b'D':
             holdingRight = False
+
 
     def main(self):
         global window
