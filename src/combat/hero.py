@@ -17,6 +17,8 @@ class hero:
         #these attributes are optional to a particular scene.
         #used to increase bonuses (attack, defense)
         self.tempBonus = 0
+        self.experience = 0
+        self.xpNeeded = 100*level
 
     def loseHealth(self, amount):
         self.currentHealth = int(self.currentHealth - amount)
@@ -94,3 +96,14 @@ class hero:
 
     def getExperience(self):
         return self.experience
+
+    def levelUp(self):
+        self.level+=1
+        if self.level>=10:
+            self.xpNeeded = int(10*self.level*0.2)
+
+    def gainExperience(self, xp):
+        self.experience+=xp
+        if self.experience>=self.xpNeeded:
+            self.experience = self.experience-self.xpNeeded
+            self.levelUp()
