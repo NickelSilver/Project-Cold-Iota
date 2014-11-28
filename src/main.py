@@ -774,6 +774,7 @@ class Main():
                 hasMonster = False
                 paused = False
                 combatAction = 0
+                battleTurn = 0
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:
             x = 18.0

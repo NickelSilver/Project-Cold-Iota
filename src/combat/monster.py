@@ -27,7 +27,7 @@ class monster:
         self.tempBonus = 0
 
     def loseHealth(self, amount):
-        self.currentHealth = self.currentHealth - amount
+        self.currentHealth = int(self.currentHealth - amount)
         #Prevent negative hp
         if self.currentHealth < 0:
             self.currentHealth = 0
