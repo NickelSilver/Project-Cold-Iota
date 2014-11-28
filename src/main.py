@@ -59,6 +59,7 @@ protagonist = hero('Somnolous', 1)
 battleTurn = 0 #0 for character turn, 1 for enemy turn
 protagDefend = False
 monDefend = False
+npcFight =False
 
 
 class Main():
@@ -374,7 +375,7 @@ class Main():
         global moving, movedVertical, movedHorizontal, mapMovedVertical, mapMovedHorizontal, sceneMap, parallaxMap, verticalPos, \
             horizontalPos, npcs, npcList, npcCollider, showText, firstRun,texture, hasNext, currentLine, selection, maxSelection, paused, \
             npcTimer, npcSteps, tutorial, combat, hasMonster, monster, combatAction, enemyDef, protagonist, battleTurn,\
-            monDefend, protagDefend
+            monDefend, protagDefend, npcFight
         npcTimer+=1
         if firstRun:
             self.update()
@@ -644,9 +645,14 @@ class Main():
             
             if not hasMonster:
                 createMonsterPool(sceneMap)
-                monsters = getMonsterPool()
-                num = random.randint(0,len(monsters)-1)
-                monster = monsters[num]
+                if npcFight:
+                    npcFight = False
+                    monsters = getNpcMonsterPool()
+                    monster = monsters[0]
+                else:
+                    monsters = getMonsterPool()
+                    num = random.randint(0,len(monsters)-1)
+                    monster = monsters[num]
                 levelMax = getLevelCap()
                 minLevel = getLevelMin()
                 monster.level = random.randint(minLevel, levelMax)
@@ -866,7 +872,7 @@ class Main():
     def keyPressed(self, *args):
         global holdingLeft, holdingRight, holdingUp, holdingDown, showText,paused, hasNext, currentLine, selection, maxSelection, \
         movedVertical, vertOffset, movedHorizontal, mapMovedVertical, mapMovedHorizontal, verticalPos, horizontalPos, facing, \
-        sceneMap, npcList, npcs, combat, combatAction, battleTurn, protagonist
+        sceneMap, npcList, npcs, combat, combatAction, battleTurn, protagonist, npcFight
         if args[0] == b"\033" and not showText and not combat: # If escape is pressed, bring up the pause menu.
             if not paused:
                 paused = True
@@ -891,6 +897,7 @@ class Main():
             dice = random.randrange(1, 100)
             if (dice%5 == 0):
                 combat = True
+                npcFight =True
                 paused = True
             showText = True
         elif args[0] == b'\015' and showText and not hasNext:
