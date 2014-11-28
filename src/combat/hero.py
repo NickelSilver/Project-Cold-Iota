@@ -30,6 +30,10 @@ class hero:
         if self.currentHealth > self.health:
             self.health = self.currentHealth
 
+    def heal(self):
+        amount = self.level*10
+        self.gainHealth(amount)
+
     def getCurrentHealth(self):
         return self.currentHealth
 

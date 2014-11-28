@@ -68,8 +68,10 @@ class Main():
         option = random.randint(0,2)
         if option==0:
             monDefend = True
+            print('Monster defends')
         else:
             monDefend = False
+            print('monster attacks')
             if protagDefend:
                 protagonist.defend(enemyMon.attackHero())
             else:
@@ -748,6 +750,7 @@ class Main():
 
             if battleTurn==0:
                 if combatAction==1:
+                    print('You attack')
                     combatAction = 0
                     protagDefend = False
                     if monDefend:
@@ -757,12 +760,16 @@ class Main():
                         print('enemy health: '+str(monster.currentHealth)+'\nYour health: ' +str(protagonist.currentHealth))
                     battleTurn+=1
                 elif combatAction==2:
+                    print('You defend')
                     protagDefend = True
                     combatAction = 0
                     battleTurn+=1
                 elif combatAction==3:
+                    print('You healed')
+                    protagonist.heal()
                     protagDefend = False
                     combatAction = 0
+                    print('enemy health: '+str(monster.currentHealth)+'\nYour health: ' +str(protagonist.currentHealth))
                     battleTurn+=1
 
             else:
