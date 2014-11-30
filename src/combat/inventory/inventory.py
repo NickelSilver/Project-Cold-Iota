@@ -6,7 +6,6 @@ class inventory():
     def __init__(self):
         #gather inventory from a saved file.
         self.inventory = []
-        self.itemCount = 0
 
     def loadInventory(self, items):
         for item in range(items.count):
@@ -14,7 +13,7 @@ class inventory():
 
     def addItem(self, item):
         self.inventory.append(item)
-        return "You picked up ",item,"! You can find it in your inventory."
+        return "You picked up ",item.name,"! You can find it in your inventory."
         #remove item by index
 
     def addHealthPotion(self, price, value):
@@ -41,20 +40,28 @@ class inventory():
 
     #counts the number of items in an inventory e.g. 3 health potions.
     def countItems(self, item):
-        return self.inventory.count(item)
+        count = 0
+        for listItem in range(len(self.inventory)):
+            if self.inventory[listItem].name == item:
+                count = count + 1
+        return count
 
+    def countHealthPotions(self):
+        return self.countItems("Health Potion")
 
+    def countManaPotions(self):
+        return self.countItems("Mana Potion")
 
 
 if __name__ == '__main__':
 
     from inventory import inventory
     testInv = inventory()
-    testInv.addItem("Health Potion")
-    testInv.addItem("Mana Potion")
-    testInv.addItem("Health Potion")
     testInv.addHealthPotion(50,5)
+    testInv.addHealthPotion(50,5)
+    testInv.addHealthPotion(50,5)
+    testInv.addManaPotion(100,10)
+    print(testInv.countHealthPotions())
+    print(testInv.countManaPotions())
 
-    print(testInv.countItems("Health Potion"))
-    #print(testInv.removeItem(0))
-    print(testInv.removeItem(3))
+    print(testInv.removeItem(0))
