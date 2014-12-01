@@ -4,7 +4,7 @@ __author__ = 'Matt'
 import random
 import math
 import decimal
-
+from combat.items.item import *
 class monster:
 
     #default values for a monster.  Monster will scale based on level chosen.
@@ -118,17 +118,29 @@ class monster:
         return self.experience
 
     def dropLoot(self):
+
         return self.loot
+
+    def getGenericLoot(self, price, value):
+
+        lootNumber = random.randrange(1, 3)
+        if lootNumber == 1:
+            hp = item()
+            hp.name = "Health Potion"
+            hp.description = "Increase hp by" + str(value) + "\n" + "Sell Value:  " + str(price)
+            hp.price = price
+            hp.value = value
+            return hp
+        elif lootNumber ==2:
+            mp = item()
+            mp.name = "Mana Potion"
+            mp.description = "Increases mana by" + str(value) + "\n" + "Sell Value:  " + str(price)
+            mp.price = price
+            mp.value = value
+            return mp
+
 
     def speak(self, text):
         sentence = self.name,":  ", text
         return sentence
-
-
-
-#testing
-#car = monster("Raptor","Raptorsprite", 3)
-#print("attacked for:  ",car.attack)
-#print(car.defend(15))
-#print("Resulting damage done:  ",car.attack - car.defend(15))
 

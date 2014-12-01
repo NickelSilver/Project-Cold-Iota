@@ -1,7 +1,7 @@
 __author__ = 'Andrea'
 
 import random
-
+from combat.items.inventory import *
 class hero:
 
     def __init__(self, name, level):
@@ -19,6 +19,7 @@ class hero:
         self.tempBonus = 0
         self.experience = 0
         self.xpNeeded = 100*level
+        self.inventory = inventory()
 
     def loseHealth(self, amount):
         self.currentHealth = int(self.currentHealth - amount)
@@ -116,4 +117,3 @@ class hero:
         if self.experience>=self.xpNeeded:
             self.experience = self.experience-self.xpNeeded
             self.levelUp()
-            print('level up, you are now: '+str(self.level))

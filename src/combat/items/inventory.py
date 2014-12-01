@@ -1,6 +1,6 @@
 __author__ = 'Matt'
 
-from item import *
+from combat.items.item import *
 
 class inventory():
     def __init__(self):
@@ -32,11 +32,13 @@ class inventory():
         mp.value = value
         self.addItem(mp)
 
-    def removeItem(self, index):
-        tempItem = self.inventory[index]
-
+    def removeItem(self, item):
+        tempItem = ""
+        for listItem in range(len(self.inventory)):
+            if self.inventory[listItem].name == item:
+                tempItem = self.inventory[listItem]
         self.inventory.remove(tempItem)
-        return "Removed ",tempItem.name,"from inventory."
+        return tempItem.name
 
     #counts the number of items in an inventory e.g. 3 health potions.
     def countItems(self, item):
@@ -53,15 +55,4 @@ class inventory():
         return self.countItems("Mana Potion")
 
 
-if __name__ == '__main__':
 
-    from inventory import inventory
-    testInv = inventory()
-    testInv.addHealthPotion(50,5)
-    testInv.addHealthPotion(50,5)
-    testInv.addHealthPotion(50,5)
-    testInv.addManaPotion(100,10)
-    print(testInv.countHealthPotions())
-    print(testInv.countManaPotions())
-
-    print(testInv.removeItem(0))

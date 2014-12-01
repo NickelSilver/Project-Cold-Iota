@@ -136,6 +136,21 @@ class tests(unittest.TestCase):
         monster1.loseMana(500)
         self.assertTrue(monster1.isDead())
 
+    def testLoot(self):
+        x = monster("TestMonster", "testSprite", 3)
+        testItem = x.getGenericLoot(5,5)
+        pass
+
+    def testInventory(self):
+        from combat.items.inventory import inventory
+        testInv = inventory()
+        testInv.addHealthPotion(50,5)
+        testInv.addHealthPotion(50,5)
+        testInv.addHealthPotion(50,5)
+        testInv.addManaPotion(100,10)
+        self.assertEqual(3,testInv.countHealthPotions())
+        self.assertEqual(1,testInv.countManaPotions())
+
 
 if __name__ == '__main__':
     unittest.main()
