@@ -103,8 +103,7 @@ class hero:
         self.speed+=int(self.level*0.8)
         self.mana = 50*self.level
         self.attack = 5*self.level
-        self.defense = self.level
-        self.level = self.level
+        self.defense +=int(self.level*1.8)
         self.currentHealth = self.health
         self.currentMana = self.mana
         if self.level>=10:
