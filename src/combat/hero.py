@@ -100,7 +100,9 @@ class hero:
     def levelUp(self):
         self.level+=1
         if self.level>=10:
-            self.xpNeeded = int(10*self.level*0.2)
+            self.xpNeeded = int(100*self.level*0.2)
+        else:
+            self.xpNeeded = int(100*self.level)
 
     def gainExperience(self, xp):
         self.experience+=xp
