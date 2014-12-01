@@ -43,7 +43,7 @@ class monster:
 
     def setLevel(self,level):
         self.health = 100+20*level
-        self.speed = 10
+        self.speed+=int(self.level*0.8)
         self.mana = 50*level
         self.attack = 5*level
         self.defense = level

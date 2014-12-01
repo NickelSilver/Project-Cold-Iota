@@ -792,6 +792,9 @@ class Main():
                 if protagonist.isDead():
                     print("Game over, start the game again and reload")
                     sys.exit(0)
+                elif monster.isDead():
+                    print('you gained '+str(monster.getExperience())+' xp')
+                    protagonist.gainExperience(monster.getExperience())
 
         #Relocated to fix NPCs rendering on top of text boxes. 
         if showText:

@@ -99,6 +99,14 @@ class hero:
 
     def levelUp(self):
         self.level+=1
+        self.health = 100+25*self.level
+        self.speed+=int(self.level*0.8)
+        self.mana = 50*self.level
+        self.attack = 5*self.level
+        self.defense = self.level
+        self.level = self.level
+        self.currentHealth = self.health
+        self.currentMana = self.mana
         if self.level>=10:
             self.xpNeeded = int(100*self.level*0.2)
         else:
@@ -109,3 +117,4 @@ class hero:
         if self.experience>=self.xpNeeded:
             self.experience = self.experience-self.xpNeeded
             self.levelUp()
+            print('level up, you are now: '+str(self.level))
