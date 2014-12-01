@@ -655,10 +655,11 @@ class Main():
                     monster = monsters[num]
                 levelMax = getLevelCap()
                 minLevel = getLevelMin()
-                monster.level = random.randint(minLevel, levelMax)
+                monster.setLevel(random.randint(minLevel, levelMax))
                 selection = 0
                 hasMonster = True
                 paused = True
+                print(str(monster.name)+' level ' +str(monster.level)+' appeared')
 
             #print ("The combat should be implemented here.",monster.name,monster.level)
             x = 18

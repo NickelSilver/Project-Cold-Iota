@@ -11,7 +11,7 @@ class monster:
     def __init__(self, name, sprite, level):
         self.name = name
         self.sprite = sprite
-        self.health = 100*level
+        self.health = 100+20*level
         self.speed = 10
         self.mana = 50*level
         self.attack = 5*level
@@ -21,7 +21,7 @@ class monster:
         self.currentMana = self.mana
         self.loot = ""
         #HOW MUCH the monster is worth
-        self.experience = 100*level
+        self.experience = 100+10*level
         #these attributes are optional to a particular scene.
         #used to increase bonuses (attack, defense)
         self.tempBonus = 0
@@ -40,6 +40,22 @@ class monster:
 
     def getCurrentHealth(self):
         return self.currentHealth
+
+    def setLevel(self,level):
+        self.health = 100+20*level
+        self.speed = 10
+        self.mana = 50*level
+        self.attack = 5*level
+        self.defense = level
+        self.level = level
+        self.currentHealth = self.health
+        self.currentMana = self.mana
+        self.loot = ""
+        #HOW MUCH the monster is worth
+        self.experience = 100+10*level
+        #these attributes are optional to a particular scene.
+        #used to increase bonuses (attack, defense)
+        self.tempBonus = 0
 
     def loseMana(self, mana):
         self.currentMana = self.currentMana - mana

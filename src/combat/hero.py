@@ -54,7 +54,7 @@ class hero:
 
     def attackMonster(self):
         #damage a random amount
-        amplifier = random.uniform(.8,1.2)
+        amplifier = random.uniform(1.8,2.8)
         result = int(self.attack*amplifier)
         return result
 
