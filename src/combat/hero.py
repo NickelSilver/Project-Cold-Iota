@@ -117,3 +117,11 @@ class hero:
         if self.experience>=self.xpNeeded:
             self.experience = self.experience-self.xpNeeded
             self.levelUp()
+
+    def sellItem(self, item):
+        ""
+    def buyItem(self, item):
+        ""
+    def closeInventory(self):
+        ""
+        #save inventory

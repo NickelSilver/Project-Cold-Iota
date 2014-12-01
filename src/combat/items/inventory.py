@@ -4,9 +4,9 @@ from combat.items.item import *
 
 class inventory():
     def __init__(self):
-        #gather inventory from a saved file.
         self.inventory = []
 
+    #gather inventory from pickled file.
     def loadInventory(self, items):
         for item in range(items.count):
             self.inventory.addItem(item)
@@ -37,7 +37,10 @@ class inventory():
         for listItem in range(len(self.inventory)):
             if self.inventory[listItem].name == item:
                 tempItem = self.inventory[listItem]
-        self.inventory.remove(tempItem)
+                self.inventory.remove(tempItem)
+                break
+
+
         return tempItem.name
 
     #counts the number of items in an inventory e.g. 3 health potions.
@@ -53,6 +56,5 @@ class inventory():
 
     def countManaPotions(self):
         return self.countItems("Mana Potion")
-
 
 
