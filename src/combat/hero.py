@@ -35,7 +35,10 @@ class hero:
 
     def heal(self):
         amount = self.level*10
-        self.gainHealth(amount)
+        if self.currentHealth+amount<self.health:
+            self.gainHealth(amount)
+        else:
+            self.currentHealth = self.health
 
     def getCurrentHealth(self):
         return self.currentHealth
@@ -117,6 +120,7 @@ class hero:
         if self.experience>=self.xpNeeded:
             self.experience = self.experience-self.xpNeeded
             self.levelUp()
+            print('level up, you are now: '+str(self.level))
 
     def sellItem(self, item):
         ""
